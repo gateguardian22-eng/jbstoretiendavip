@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JBstore VIP — Gacha Anime Experience</title>
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #fce7f3 0%, #e0e7ff 100%);
+      --accent-color: #f43f5e;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --border-color: #fbcfe8;
+      --text-main: #1e1b4b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    
+    body {
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* BARRA SUPERIOR (HEADER) */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(8px);
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .logo-vip { font-size: 20px; font-weight: 900; color: var(--accent-color); letter-spacing: 1px; }
+    
+    .sound-btn {
+      background: #ffffff;
+      border: 2px solid var(--accent-color);
+      color: var(--accent-color);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .sound-btn:hover { background: var(--accent-color); color: #fff; }
+
+    /* LAYOUT PRINCIPAL (DOS COLUMNAS) */
+    .app-layout {
+      display: flex;
+      flex: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 16px;
+      gap: 20px;
+    }
+
+    /* COLUMNA IZQUIERDA: PERSONAJE & PESTAÑAS */
+    .sidebar {
+      width: 320px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .character-container {
+      position: relative;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    /* BOCADILLO DE DIÁLOGO */
+    .dialogue-box {
+      background: #ffffff;
+      border: 2px solid var(--accent-color);
+      border-radius: 16px;
+      padding: 12px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      position: relative;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 12px rgba(244, 63, 94, 0.15);
+      width: 100%;
+    }
+    .dialogue-box::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 10px 10px 0;
+      border-style: solid;
+      border-color: #ffffff transparent;
+      display: block;
+      width: 0;
+    }
+
+    .character-img {
+      width: 220px;
+      height: 280px;
+      object-fit: contain;
+      cursor: pointer;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.1));
+      transition: transform 0.2s;
+    }
+    .character-img:active { transform: scale(0.95); }
+
+    /* MENÚ VERTICAL DE PESTAÑAS */
+    .tabs-vertical {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .tab-item {
+      padding: 12px 16px;
+      background: #ffffff;
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tab-item.active {
+      background: var(--accent-color);
+      color: #ffffff;
+      border-color: var(--accent-color);
+      transform: translateX(6px);
+      box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);
+    }
+
+    /* COLUMNA DERECHA: TIENDA / CUADRÍCULA */
+    .shop-area {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      align-content: start;
+    }
+
+    .item-card {
+      background: var(--card-bg);
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .item-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      border-color: var(--accent-color);
+    }
+
+    .stock-tag {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    .item-img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 8px;
+    }
+
+    .item-title { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
+    .item-price { font-size: 15px; font-weight: 900; color: var(--accent-color); margin-bottom: 10px; }
+
+    .buy-btn {
+      width: 100%;
+      padding: 8px;
+      background: var(--text-main);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* MODAL ESTILO GACHA COMPRA */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .modal-gacha {
+      background: #ffffff;
+      border: 3px solid var(--accent-color);
+      border-radius: 20px;
+      max-width: 380px;
+      width: 100%;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+    }
+
+    .modal-qty-control {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin: 16px 0;
+    }
+
+    .qty-btn-gacha {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid var(--accent-color);
+      background: #fff;
+      color: var(--accent-color);
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    /* RESPONSIVE CELULAR */
+    @media (max-width: 768px) {
+      .app-layout { flex-direction: column; }
+      .sidebar { width: 100%; }
+      .character-img { height: 180px; }
+      .tabs-vertical { flex-direction: row; overflow-x: auto; }
+      .tab-item { flex: 0 0 auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- REPRODUCTOR DE AUDIO SILENCIOSO INICIALMENTE -->
+  <audio id="bgm" loop>
+    <!-- Puedes reemplazar el src por tu MP3 favorito tipo Anime/Gacha -->
+    <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" type="audio/mp3">
+  </audio>
+
+  <header>
+    <div class="logo-vip">✨ JBstore VIP</div>
+    <button class="sound-btn" onclick="toggleAudio()" id="audio-toggle">🔊 Música: OFF</button>
+  </header>
+
+  <div class="app-layout">
+    <!-- BARRA LATERAL CON PERSONAJE -->
+    <div class="sidebar">
+      <div class="character-container">
+        <div class="dialogue-box" id="character-text">¡Bienvenido a JBstore VIP! ¿Qué se te antoja hoy?</div>
+        <!-- Imagen de la mascota (PNG transparente) -->
+        <img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" class="character-img" id="mascot" onclick="talkMascot()" alt="Mascota VIP">
+      </div>
+
+      <div class="tabs-vertical">
+        <button class="tab-item active" onclick="switchCategory('PAQUETES', this, '¡Aquí tienes los mejores paquetes VIP!')">💎 Paquetes</button>
+        <button class="tab-item" onclick="switchCategory('PASES', this, '¡Pases de batalla listos para activar!')">🎫 Pases</button>
+        <button class="tab-item" onclick="switchCategory('PROMOCIONES', this, '¡Aprovecha estas ofertas limitadas!')">🔥 Promos</button>
+      </div>
+    </div>
+
+    <!-- ÁREA DE PRODUCTOS -->
+    <div class="shop-area" id="shop-grid"></div>
+  </div>
+
+  <!-- MODAL DE COMPRA GACHA -->
+  <div class="modal-overlay" id="modal-buy">
+    <div class="modal-gacha">
+      <h3 id="modal-title" style="margin-bottom: 8px;">--</h3>
+      <p style="font-size: 12px; color: #666;" id="modal-desc">--</p>
+      
+      <div class="modal-qty-control">
+        <button class="qty-btn-gacha" onclick="adjustQty(-1)">-</button>
+        <span style="font-size: 20px; font-weight: 900;" id="modal-qty">1</span>
+        <button class="qty-btn-gacha" onclick="adjustQty(1)">+</button>
+      </div>
+
+      <div style="font-size: 18px; font-weight: 900; color: var(--accent-color); margin-bottom: 16px;" id="modal-total">0.00 USDT</div>
+
+      <div style="display: flex; gap: 10px;">
+        <button class="buy-btn" style="background: var(--accent-color);" onclick="confirmVipOrder()">📲 Confirmar Pedido</button>
+        <button class="buy-btn" style="background: #e2e8f0; color: #333;" onclick="closeVipModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const PHONE_NUMBER = "58412546526";
+    let isAudioPlaying = false;
+    let currentQty = 1;
+    let selectedProduct = null;
+
+    // PRODUCTOS VIP DE PRUEBA
+    const vipProducts = [
+      { id: "v1", cat: "PAQUETES", title: "Combo 1000 Robux", price: 11.80, stock: 5, img: "https://lh3.googleusercontent.com/d/1QZieXFAfc8Hcyjht7Qxb-FtdOhoDJaon" },
+      { id: "v2", cat: "PAQUETES", title: "2400 COD Points", price: 25.90, stock: 3, img: "https://lh3.googleusercontent.com/d/1jajT3d5s0q1f_tkUCMSsP_89Vb73yWub" },
+      { id: "v3", cat: "PASES", title: "Pase de Batalla FF", price: 4.50, stock: 10, img: "https://via.placeholder.com/200?text=Pase+FF" }
+    ];
+
+    function toggleAudio() {
+      const audio = document.getElementById('bgm');
+      const btn = document.getElementById('audio-toggle');
+      if (isAudioPlaying) {
+        audio.pause();
+        btn.innerText = "🔊 Música: OFF";
+      } else {
+        audio.play().catch(() => alert("Toca la pantalla primero para activar el audio."));
+        btn.innerText = "🎶 Música: ON";
+      }
+      isAudioPlaying = !isAudioPlaying;
+    }
+
+    function talkMascot() {
+      const phrases = [
+        "¡Jefe! Esas recargas están saliendo volando.",
+        "¿Necesitas ayuda eligiendo el combo perfecto?",
+        "¡Recuerda que entregamos súper rápido por WhatsApp!"
+      ];
+      const random = phrases[Math.floor(Math.random() * phrases.length)];
+      document.getElementById('character-text').innerText = random;
+    }
+
+    function switchCategory(cat, element, speech) {
+      document.querySelectorAll('.tab-item').forEach(b => b.classList.remove('active'));
+      element.classList.add('active');
+      document.getElementById('character-text').innerText = speech;
+      renderVipShop(cat);
+    }
+
+    function renderVipShop(category) {
+      const grid = document.getElementById('shop-grid');
+      grid.innerHTML = '';
+
+      const filtered = vipProducts.filter(p => p.cat === category || category === 'TODOS');
+      
+      filtered.forEach(p => {
+        grid.innerHTML += `
+          <div class="item-card">
+            <span class="stock-tag">Disponibles: ${p.stock}</span>
+            <img src="${p.img}" class="item-img" alt="${p.title}">
+            <div class="item-title">${p.title}</div>
+            <div class="item-price">${p.price.toFixed(2)} USDT</div>
+            <button class="buy-btn" onclick="openVipModal('${p.id}')">Seleccionar</button>
+          </div>
+        `;
+      });
+    }
+
+    function openVipModal(prodId) {
+      selectedProduct = vipProducts.find(p => p.id === prodId);
+      currentQty = 1;
+      document.getElementById('modal-title').innerText = selectedProduct.title;
+      document.getElementById('modal-desc').innerText = `Precio unitario: ${selectedProduct.price.toFixed(2)} USDT`;
+      updateModalTotal();
+      document.getElementById('modal-buy').style.display = 'flex';
+    }
+
+    function adjustQty(delta) {
+      currentQty = Math.max(1, currentQty + delta);
+      updateModalTotal();
+    }
+
+    function updateModalTotal() {
+      document.getElementById('modal-qty').innerText = currentQty;
+      const total = (selectedProduct.price * currentQty).toFixed(2);
+      document.getElementById('modal-total').innerText = `${total} USDT`;
+    }
+
+    function closeVipModal() {
+      document.getElementById('modal-buy').style.display = 'none';
+    }
+
+    function confirmVipOrder() {
+      const total = (selectedProduct.price * currentQty).toFixed(2);
+      const text = `🌟 *PEDIDO JBstore VIP*\n\n📌 *Producto:* ${selectedProduct.title}\n🔢 *Cantidad:* x${currentQty}\n💰 *Total:* ${total} USDT\n\n¿Tienen disponibilidad inmediata?`;
+      window.open(`https://wa.me/${PHONE_NUMBER}?text=${encodeURIComponent(text)}`, '_blank');
+      closeVipModal();
+    }
+
+    // Inicializar
+    renderVipShop('PAQUETES');
+  </script>
+</body>
+</html>
