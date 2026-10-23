@@ -4,13 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JBstore VIP — Gacha Anime Experience</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg-gradient: linear-gradient(135deg, #fce7f3 0%, #e0e7ff 100%);
-      --accent-color: #f43f5e;
-      --card-bg: rgba(255, 255, 255, 0.9);
-      --border-color: #fbcfe8;
-      --text-main: #1e1b4b;
+      --bg-gradient: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+      --accent-color: #16a34a;
+      --accent-hover: #15803d;
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --border-color: #bbf7d0;
+      --text-main: #064e3b;
+      --text-muted: #374151;
+      --danger: #dc2626;
+      --primary: #111827;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -21,6 +26,7 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      padding-bottom: 80px;
     }
 
     /* BARRA SUPERIOR (HEADER) */
@@ -28,31 +34,37 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 24px;
-      background: rgba(255, 255, 255, 0.8);
+      padding: 12px 20px;
+      background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(8px);
       border-bottom: 2px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 20;
     }
 
     .logo-vip { font-size: 20px; font-weight: 900; color: var(--accent-color); letter-spacing: 1px; }
     
-    .sound-btn {
+    .header-btns { display: flex; gap: 8px; align-items: center; }
+
+    .sound-btn, .admin-btn {
       background: #ffffff;
       border: 2px solid var(--accent-color);
       color: var(--accent-color);
-      padding: 6px 14px;
+      padding: 6px 12px;
       border-radius: 20px;
       font-weight: 700;
+      font-size: 12px;
       cursor: pointer;
       transition: all 0.2s;
     }
-    .sound-btn:hover { background: var(--accent-color); color: #fff; }
+    .sound-btn:hover, .admin-btn:hover { background: var(--accent-color); color: #fff; }
 
     /* LAYOUT PRINCIPAL (DOS COLUMNAS) */
     .app-layout {
       display: flex;
       flex: 1;
-      max-width: 1200px;
+      max-width: 1100px;
       margin: 0 auto;
       width: 100%;
       padding: 16px;
@@ -65,7 +77,6 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      position: relative;
     }
 
     .character-container {
@@ -84,12 +95,16 @@
       border-radius: 16px;
       padding: 12px 16px;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       text-align: center;
       position: relative;
       margin-bottom: 12px;
-      box-shadow: 0 4px 12px rgba(244, 63, 94, 0.15);
+      box-shadow: 0 4px 12px rgba(22, 163, 74, 0.15);
       width: 100%;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .dialogue-box::after {
       content: '';
@@ -106,11 +121,11 @@
 
     .character-img {
       width: 220px;
-      height: 280px;
+      height: 260px;
       object-fit: contain;
       cursor: pointer;
       filter: drop-shadow(0 8px 16px rgba(0,0,0,0.1));
-      transition: transform 0.2s;
+      transition: transform 0.15s ease-in-out;
     }
     .character-img:active { transform: scale(0.95); }
 
@@ -135,13 +150,14 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      color: var(--text-main);
     }
     .tab-item.active {
       background: var(--accent-color);
       color: #ffffff;
       border-color: var(--accent-color);
       transform: translateX(6px);
-      box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);
+      box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
     }
 
     /* COLUMNA DERECHA: TIENDA / CUADRÍCULA */
@@ -160,8 +176,7 @@
       padding: 12px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      text-align: center;
+      justify-content: space-between;
       position: relative;
       transition: transform 0.2s, box-shadow 0.2s;
     }
@@ -175,12 +190,13 @@
       position: absolute;
       top: 8px;
       right: 8px;
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(0, 0, 0, 0.65);
       color: #fff;
       font-size: 10px;
       font-weight: 700;
       padding: 2px 6px;
       border-radius: 6px;
+      z-index: 2;
     }
 
     .item-img {
@@ -189,44 +205,58 @@
       object-fit: cover;
       border-radius: 12px;
       margin-bottom: 8px;
+      background: #e5e7eb;
     }
 
-    .item-title { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
+    .item-title { font-size: 14px; font-weight: 800; margin-bottom: 4px; color: var(--primary); }
+    .item-desc { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
     .item-price { font-size: 15px; font-weight: 900; color: var(--accent-color); margin-bottom: 10px; }
 
     .buy-btn {
       width: 100%;
-      padding: 8px;
-      background: var(--text-main);
+      padding: 10px;
+      background: var(--accent-color);
       color: #fff;
       border: none;
       border-radius: 8px;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
+      transition: background 0.2s;
     }
+    .buy-btn:hover { background: var(--accent-hover); }
 
-    /* MODAL ESTILO GACHA COMPRA */
+    /* MODALES ESTILO GACHA */
     .modal-overlay {
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.6);
       backdrop-filter: blur(4px);
       z-index: 100;
       justify-content: center;
       align-items: center;
       padding: 16px;
+      overflow-y: auto;
     }
 
     .modal-gacha {
       background: #ffffff;
       border: 3px solid var(--accent-color);
       border-radius: 20px;
-      max-width: 380px;
+      max-width: 420px;
       width: 100%;
       padding: 20px;
-      text-align: center;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.25);
+      position: relative;
+    }
+
+    .field-group { margin-bottom: 12px; text-align: left; }
+    .field-group label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; }
+
+    select, input, textarea {
+      width: 100%; padding: 10px; font-size: 13px;
+      border: 1px solid var(--border-color); border-radius: 8px;
+      background: #f9fafb; color: #111827; outline: none;
     }
 
     .modal-qty-control {
@@ -238,15 +268,11 @@
     }
 
     .qty-btn-gacha {
-      width: 36px;
-      height: 36px;
+      width: 36px; height: 36px;
       border-radius: 50%;
       border: 2px solid var(--accent-color);
-      background: #fff;
-      color: var(--accent-color);
-      font-size: 18px;
-      font-weight: 900;
-      cursor: pointer;
+      background: #fff; color: var(--accent-color);
+      font-size: 18px; font-weight: 900; cursor: pointer;
     }
 
     /* RESPONSIVE CELULAR */
@@ -261,70 +287,217 @@
 </head>
 <body>
 
-  <!-- REPRODUCTOR DE AUDIO SILENCIOSO INICIALMENTE -->
+  <!-- REPRODUCTOR DE AUDIO BGM -->
   <audio id="bgm" loop>
-    <!-- Puedes reemplazar el src por tu MP3 favorito tipo Anime/Gacha -->
     <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" type="audio/mp3">
   </audio>
 
   <header>
     <div class="logo-vip">✨ JBstore VIP</div>
-    <button class="sound-btn" onclick="toggleAudio()" id="audio-toggle">🔊 Música: OFF</button>
+    <div class="header-btns">
+      <button class="sound-btn" onclick="toggleAudio()" id="audio-toggle">🔊 Música: OFF</button>
+      <button class="admin-btn" onclick="openModal('admin-modal')">⚙️ Admin</button>
+    </div>
   </header>
 
   <div class="app-layout">
     <!-- BARRA LATERAL CON PERSONAJE -->
     <div class="sidebar">
       <div class="character-container">
-        <div class="dialogue-box" id="character-text">¡Bienvenido a JBstore VIP! ¿Qué se te antoja hoy?</div>
-        <!-- Imagen de la mascota (PNG transparente) -->
-        <img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" class="character-img" id="mascot" onclick="talkMascot()" alt="Mascota VIP">
+        <div class="dialogue-box" id="character-text">¡Hola! ¿Qué se te antoja hoy? ✨ ¡Los mejores precios VIP!</div>
+        <img src="https://via.placeholder.com/220x260/dcfce7/16a34a?text=Avatar+JBstore+Verde" class="character-img" id="mascot" onclick="talkMascot()" alt="Mascota JBstore VIP">
       </div>
 
       <div class="tabs-vertical">
-        <button class="tab-item active" onclick="switchCategory('PAQUETES', this, '¡Aquí tienes los mejores paquetes VIP!')">💎 Paquetes</button>
-        <button class="tab-item" onclick="switchCategory('PASES', this, '¡Pases de batalla listos para activar!')">🎫 Pases</button>
-        <button class="tab-item" onclick="switchCategory('PROMOCIONES', this, '¡Aprovecha estas ofertas limitadas!')">🔥 Promos</button>
+        <button class="tab-item active" onclick="switchCategory('Juegos', this)">🎮 Juegos</button>
+        <button class="tab-item" onclick="switchCategory('Streaming', this)">📺 Streaming</button>
+        <button class="tab-item" onclick="switchCategory('Licencias', this)">🔑 Licencias</button>
       </div>
     </div>
 
-    <!-- ÁREA DE PRODUCTOS -->
+    <!-- ÁREA DE PRODUCTOS TIENDA -->
     <div class="shop-area" id="shop-grid"></div>
   </div>
 
-  <!-- MODAL DE COMPRA GACHA -->
+  <!-- MODAL DE COMPRA CLIENTE -->
   <div class="modal-overlay" id="modal-buy">
     <div class="modal-gacha">
-      <h3 id="modal-title" style="margin-bottom: 8px;">--</h3>
-      <p style="font-size: 12px; color: #666;" id="modal-desc">--</p>
-      
+      <h3 id="modal-title" style="margin-bottom: 8px; text-align: center;">--</h3>
+      <p style="font-size: 12px; color: #666; text-align: center; margin-bottom: 12px;" id="modal-desc">--</p>
+
+      <div class="field-group">
+        <label>Selecciona Opción / Variante:</label>
+        <select id="modal-variant-select" onchange="updateModalTotal()"></select>
+      </div>
+
       <div class="modal-qty-control">
         <button class="qty-btn-gacha" onclick="adjustQty(-1)">-</button>
         <span style="font-size: 20px; font-weight: 900;" id="modal-qty">1</span>
         <button class="qty-btn-gacha" onclick="adjustQty(1)">+</button>
       </div>
 
-      <div style="font-size: 18px; font-weight: 900; color: var(--accent-color); margin-bottom: 16px;" id="modal-total">0.00 USDT</div>
+      <div style="text-align: center; margin-bottom: 16px;">
+        <div style="font-size: 20px; font-weight: 900; color: var(--accent-color);" id="modal-total-usdt">0.00 USDT</div>
+        <div style="font-size: 13px; font-weight: 700; color: #15803d;" id="modal-total-bs">~ 0.00 BS</div>
+      </div>
+
+      <div class="field-group">
+        <label>Datos para procesar tu recarga / cuenta:</label>
+        <textarea id="client-account-data" rows="2" placeholder="Ej: ID de jugador, Usuario o Correo y Clave"></textarea>
+      </div>
 
       <div style="display: flex; gap: 10px;">
-        <button class="buy-btn" style="background: var(--accent-color);" onclick="confirmVipOrder()">📲 Confirmar Pedido</button>
-        <button class="buy-btn" style="background: #e2e8f0; color: #333;" onclick="closeVipModal()">Cancelar</button>
+        <button class="buy-btn" onclick="confirmVipOrder()">📲 Confirmar Pedido por WhatsApp</button>
+        <button class="buy-btn" style="background: #e2e8f0; color: #333;" onclick="closeModal('modal-buy')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL PANEL ADMIN PRO -->
+  <div class="modal-overlay" id="admin-modal">
+    <div class="modal-gacha" style="max-width: 500px; max-height: 90vh; overflow-y: auto;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3>⚙️ Panel Administrador Pro</h3>
+        <button onclick="closeModal('admin-modal')" style="background:none; border:none; font-size:20px; cursor:pointer;">&times;</button>
+      </div>
+
+      <div id="admin-auth">
+        <div class="field-group">
+          <label>PIN de Acceso:</label>
+          <input type="password" id="admin-pin" placeholder="Ingresa PIN (Clave: 24.07.12)">
+        </div>
+        <button class="buy-btn" onclick="authAdmin()">Ingresar</button>
+      </div>
+
+      <div id="admin-body" style="display: none;">
+        <h4 style="margin-bottom: 8px;">1. Tasa y Métodos de Pago</h4>
+        <div class="field-group">
+          <label>Tasa BS / USDT:</label>
+          <input type="number" step="0.01" id="admin-tasa">
+        </div>
+        <button class="buy-btn" style="margin-bottom: 16px;" onclick="saveGeneralSettings()">Guardar Tasa</button>
+
+        <hr style="margin: 16px 0; border: none; border-top: 1px solid var(--border-color);">
+
+        <h4 style="margin-bottom: 8px;">6. Personalización del Mascot / Avatar VIP</h4>
+        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">Pega los enlaces de las imágenes PNG sin fondo para cada gesto del personaje:</p>
+
+        <div class="field-group">
+          <label>1. Gesto Bienvenida (Saludo):</label>
+          <input type="text" id="avatar-img-0" placeholder="URL Imagen PNG">
+          <input type="text" id="avatar-text-0" placeholder="Frase de Bienvenida" style="margin-top: 4px;">
+        </div>
+
+        <div class="field-group">
+          <label>2. Gesto Pensativa:</label>
+          <input type="text" id="avatar-img-1" placeholder="URL Imagen PNG">
+          <input type="text" id="avatar-text-1" placeholder="Frase Pensativa" style="margin-top: 4px;">
+        </div>
+
+        <div class="field-group">
+          <label>3. Gesto Entusiasmada:</label>
+          <input type="text" id="avatar-img-2" placeholder="URL Imagen PNG">
+          <input type="text" id="avatar-text-2" placeholder="Frase Entusiasmada" style="margin-top: 4px;">
+        </div>
+
+        <div class="field-group">
+          <label>4. Gesto Apenada (Revisando Stock):</label>
+          <input type="text" id="avatar-img-3" placeholder="URL Imagen PNG">
+          <input type="text" id="avatar-text-3" placeholder="Frase Apenada" style="margin-top: 4px;">
+        </div>
+
+        <div class="field-group">
+          <label>5. Gesto Victoria (Pedido Listo):</label>
+          <input type="text" id="avatar-img-4" placeholder="URL Imagen PNG">
+          <input type="text" id="avatar-text-4" placeholder="Frase de Victoria" style="margin-top: 4px;">
+        </div>
+
+        <button class="buy-btn" style="background: #2563eb; margin-bottom: 16px;" onclick="saveAvatarSettings()">Guardar Configuración Avatar</button>
+
+        <hr style="margin: 16px 0; border: none; border-top: 1px solid var(--border-color);">
+
+        <h4 style="margin-bottom: 8px;">Respaldos (Exportar / Importar)</h4>
+        <div style="display: flex; gap: 8px;">
+          <button class="buy-btn" style="background: #3b82f6;" onclick="exportData()">📥 Exportar JSON</button>
+          <button class="buy-btn" style="background: #8b5cf6;" onclick="triggerImport()">📤 Importar JSON</button>
+          <input type="file" id="import-file" style="display: none;" accept=".json" onchange="importData(event)">
+        </div>
       </div>
     </div>
   </div>
 
   <script>
     const PHONE_NUMBER = "58412546526";
+
+    // DATOS DE FÁBRICA CON TUS PRODUCTOS Y LAS FRASES DEL AVATAR
+    const initialData = {
+      tasaBs: 1047,
+      pagoMovil: "Banco Mercantil | 0414-3633915 | V-17545455",
+      binanceId: "246763246 (JBstore)",
+      estadoAtencion: "ONLINE",
+      avatarConfig: [
+        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=Gesto+Saludo+Verde", text: "¡Hola! ¿Qué se te antoja hoy? ✨ ¡Los mejores precios VIP!" },
+        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=Gesto+Pensativa", text: "¿Buscabas algo especial? Dime y lo resolvemos de una." },
+        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=Gesto+Entusiasmada", text: "¡Los mejores pases están aquí! Calidad 100% garantizada. 🎯" },
+        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=Gesto+Apenada", text: "¡Oops! Déjame revisar el stock... ¡A veces vuelan! 😅" },
+        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=Gesto+Victoria", text: "¡Pedido listo! Te veo en WhatsApp para entregártelo. 📲💨" }
+      ],
+      productos: [
+        {
+          id: "1",
+          categoria: "Juegos",
+          titulo: "Roblox — Robux ",
+          desc: "Recarga Vía acceso",
+          img: "https://lh3.googleusercontent.com/d/1QZieXFAfc8Hcyjht7Qxb-FtdOhoDJaon",
+          variantes: [
+            { nombre: "80 Robux", usdt: 1.27 },
+            { nombre: "500 Robux", usdt: 5.9 },
+            { nombre: "1000 Robux", usdt: 11.8 }
+          ]
+        },
+        {
+          id: "1791774483508",
+          categoria: "Juegos",
+          titulo: "Call of Duty Mobile",
+          desc: "Recarga Via acceso",
+          img: "https://lh3.googleusercontent.com/d/1jajT3d5s0q1f_tkUCMSsP_89Vb73yWub",
+          variantes: [
+            { nombre: "80 CodP", usdt: 1.25 },
+            { nombre: "420 CodP", usdt: 6 },
+            { nombre: "880 CodP", usdt: 11.8 },
+            { nombre: "2400 CodP", usdt: 25.9 },
+            { nombre: "5000 CodP", usdt: 52.5 }
+          ]
+        },
+        {
+          id: "1791775364890",
+          categoria: "Juegos",
+          titulo: "Free Fire Latam",
+          desc: "Recarga VIA ID",
+          img: "https://via.placeholder.com/200?text=Free+Fire",
+          variantes: [
+            { nombre: "100 Diamantes", usdt: 1.3 },
+            { nombre: "300 Diamantes", usdt: 3.8 },
+            { nombre: "500 Diamantes", usdt: 5.9 },
+            { nombre: "1060 Diamantes", usdt: 11.8 }
+          ]
+        }
+      ]
+    };
+
+    let localRaw = localStorage.getItem('jbstore_vip_data');
+    let storeData = localRaw ? JSON.parse(localRaw) : initialData;
+
     let isAudioPlaying = false;
     let currentQty = 1;
     let selectedProduct = null;
+    let currentCategory = "Juegos";
+    let lastGestureIndex = -1;
 
-    // PRODUCTOS VIP DE PRUEBA
-    const vipProducts = [
-      { id: "v1", cat: "PAQUETES", title: "Combo 1000 Robux", price: 11.80, stock: 5, img: "https://lh3.googleusercontent.com/d/1QZieXFAfc8Hcyjht7Qxb-FtdOhoDJaon" },
-      { id: "v2", cat: "PAQUETES", title: "2400 COD Points", price: 25.90, stock: 3, img: "https://lh3.googleusercontent.com/d/1jajT3d5s0q1f_tkUCMSsP_89Vb73yWub" },
-      { id: "v3", cat: "PASES", title: "Pase de Batalla FF", price: 4.50, stock: 10, img: "https://via.placeholder.com/200?text=Pase+FF" }
-    ];
+    function saveToStorage() {
+      localStorage.setItem('jbstore_vip_data', JSON.stringify(storeData));
+      renderShop(currentCategory);
+    }
 
     function toggleAudio() {
       const audio = document.getElementById('bgm');
@@ -333,55 +506,77 @@
         audio.pause();
         btn.innerText = "🔊 Música: OFF";
       } else {
-        audio.play().catch(() => alert("Toca la pantalla primero para activar el audio."));
+        audio.play().catch(() => alert("Toca la pantalla para autorizar el reproductor de sonido."));
         btn.innerText = "🎶 Música: ON";
       }
       isAudioPlaying = !isAudioPlaying;
     }
 
+    // INTERACCIÓN AL TOCAR EL PERSONAJE
     function talkMascot() {
-      const phrases = [
-        "¡Jefe! Esas recargas están saliendo volando.",
-        "¿Necesitas ayuda eligiendo el combo perfecto?",
-        "¡Recuerda que entregamos súper rápido por WhatsApp!"
-      ];
-      const random = phrases[Math.floor(Math.random() * phrases.length)];
-      document.getElementById('character-text').innerText = random;
+      if (!storeData.avatarConfig || storeData.avatarConfig.length === 0) return;
+      
+      let randomIndex;
+      do {
+        randomIndex = Math.floor(Math.random() * storeData.avatarConfig.length);
+      } while (randomIndex === lastGestureIndex && storeData.avatarConfig.length > 1);
+
+      lastGestureIndex = randomIndex;
+      const g = storeData.avatarConfig[randomIndex];
+
+      document.getElementById('character-text').innerText = g.text;
+      if (g.img) document.getElementById('mascot').src = g.img;
     }
 
-    function switchCategory(cat, element, speech) {
+    function switchCategory(cat, element) {
+      currentCategory = cat;
       document.querySelectorAll('.tab-item').forEach(b => b.classList.remove('active'));
-      element.classList.add('active');
-      document.getElementById('character-text').innerText = speech;
-      renderVipShop(cat);
+      if (element) element.classList.add('active');
+      talkMascot();
+      renderShop(cat);
     }
 
-    function renderVipShop(category) {
+    function renderShop(cat) {
       const grid = document.getElementById('shop-grid');
       grid.innerHTML = '';
 
-      const filtered = vipProducts.filter(p => p.cat === category || category === 'TODOS');
-      
+      const filtered = storeData.productos.filter(p => p.categoria === cat || cat === 'TODOS');
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 32px; color: var(--text-muted);">Sin artículos en esta categoría aún.</div>`;
+        return;
+      }
+
       filtered.forEach(p => {
+        let minPrice = p.variantes[0].usdt;
         grid.innerHTML += `
           <div class="item-card">
-            <span class="stock-tag">Disponibles: ${p.stock}</span>
-            <img src="${p.img}" class="item-img" alt="${p.title}">
-            <div class="item-title">${p.title}</div>
-            <div class="item-price">${p.price.toFixed(2)} USDT</div>
-            <button class="buy-btn" onclick="openVipModal('${p.id}')">Seleccionar</button>
+            <div>
+              <span class="stock-tag">Disponible</span>
+              <img src="${p.img}" class="item-img" alt="${p.titulo}">
+              <div class="item-title">${p.titulo}</div>
+              <div class="item-desc">${p.desc}</div>
+            </div>
+            <div>
+              <div class="item-price">Desde ${minPrice.toFixed(2)} USDT</div>
+              <button class="buy-btn" onclick="openBuyModal('${p.id}')">Seleccionar</button>
+            </div>
           </div>
         `;
       });
     }
 
-    function openVipModal(prodId) {
-      selectedProduct = vipProducts.find(p => p.id === prodId);
+    function openBuyModal(prodId) {
+      selectedProduct = storeData.productos.find(p => p.id === prodId);
       currentQty = 1;
-      document.getElementById('modal-title').innerText = selectedProduct.title;
-      document.getElementById('modal-desc').innerText = `Precio unitario: ${selectedProduct.price.toFixed(2)} USDT`;
+      document.getElementById('modal-title').innerText = selectedProduct.titulo;
+      document.getElementById('modal-desc').innerText = selectedProduct.desc;
+
+      const sel = document.getElementById('modal-variant-select');
+      sel.innerHTML = selectedProduct.variantes.map(v => `<option value="${v.usdt}">${v.nombre} — ${v.usdt.toFixed(2)} USDT</option>`).join('');
+
       updateModalTotal();
-      document.getElementById('modal-buy').style.display = 'flex';
+      openModal('modal-buy');
     }
 
     function adjustQty(delta) {
@@ -391,23 +586,101 @@
 
     function updateModalTotal() {
       document.getElementById('modal-qty').innerText = currentQty;
-      const total = (selectedProduct.price * currentQty).toFixed(2);
-      document.getElementById('modal-total').innerText = `${total} USDT`;
-    }
+      const sel = document.getElementById('modal-variant-select');
+      const unitUsdt = parseFloat(sel.value) || 0;
+      const totalUsdt = unitUsdt * currentQty;
+      const totalBs = (totalUsdt * storeData.tasaBs).toFixed(2);
 
-    function closeVipModal() {
-      document.getElementById('modal-buy').style.display = 'none';
+      document.getElementById('modal-total-usdt').innerText = `${totalUsdt.toFixed(2)} USDT`;
+      document.getElementById('modal-total-bs').innerText = `~ ${totalBs} BS`;
     }
 
     function confirmVipOrder() {
-      const total = (selectedProduct.price * currentQty).toFixed(2);
-      const text = `🌟 *PEDIDO JBstore VIP*\n\n📌 *Producto:* ${selectedProduct.title}\n🔢 *Cantidad:* x${currentQty}\n💰 *Total:* ${total} USDT\n\n¿Tienen disponibilidad inmediata?`;
+      const accountData = document.getElementById('client-account-data').value.trim();
+      if (!accountData) return alert("Por favor ingresa los datos para procesar el pedido.");
+
+      const sel = document.getElementById('modal-variant-select');
+      const optName = sel.options[sel.selectedIndex].text;
+      const unitUsdt = parseFloat(sel.value);
+      const totalUsdt = unitUsdt * currentQty;
+      const totalBs = (totalUsdt * storeData.tasaBs).toFixed(2);
+
+      const text = `🌟 *PEDIDO JBstore VIP*\n\n📌 *Producto:* ${selectedProduct.titulo}\n🔹 *Opción:* ${optName}\n🔢 *Cantidad:* x${currentQty}\n💰 *Monto total:* ${totalUsdt.toFixed(2)} USDT / ${totalBs} BS\n\n👤 *Datos de la cuenta:*\n${accountData}`;
+      
       window.open(`https://wa.me/${PHONE_NUMBER}?text=${encodeURIComponent(text)}`, '_blank');
-      closeVipModal();
+      closeModal('modal-buy');
+    }
+
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    /* PANEL ADMIN */
+    function authAdmin() {
+      if (document.getElementById('admin-pin').value === "24.07.12") {
+        document.getElementById('admin-auth').style.display = 'none';
+        document.getElementById('admin-body').style.display = 'block';
+        document.getElementById('admin-tasa').value = storeData.tasaBs;
+
+        // Cargar campos del Avatar
+        if (storeData.avatarConfig) {
+          storeData.avatarConfig.forEach((g, idx) => {
+            if (document.getElementById(`avatar-img-${idx}`)) document.getElementById(`avatar-img-${idx}`).value = g.img || '';
+            if (document.getElementById(`avatar-text-${idx}`)) document.getElementById(`avatar-text-${idx}`).value = g.text || '';
+          });
+        }
+      } else { alert("PIN Incorrecto"); }
+    }
+
+    function saveGeneralSettings() {
+      storeData.tasaBs = parseFloat(document.getElementById('admin-tasa').value) || storeData.tasaBs;
+      saveToStorage();
+      alert("Tasa actualizada.");
+    }
+
+    function saveAvatarSettings() {
+      storeData.avatarConfig = [];
+      for (let i = 0; i < 5; i++) {
+        let img = document.getElementById(`avatar-img-${i}`).value.trim();
+        let text = document.getElementById(`avatar-text-${i}`).value.trim();
+        storeData.avatarConfig.push({ img, text });
+      }
+      saveToStorage();
+      talkMascot();
+      alert("¡Configuración del Avatar VIP guardada con éxito!");
+    }
+
+    function exportData() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(storeData, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `JBstore_VIP_Respaldo_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function triggerImport() { document.getElementById('import-file').click(); }
+
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (imported && imported.productos) {
+            storeData = imported;
+            saveToStorage();
+            talkMascot();
+            alert("¡Respaldo restaurado con éxito!");
+          } else { alert("El archivo no es un respaldo válido."); }
+        } catch (err) { alert("Error al leer el archivo JSON."); }
+      };
+      reader.readAsText(file);
     }
 
     // Inicializar
-    renderVipShop('PAQUETES');
+    renderShop('Juegos');
   </script>
 </body>
 </html>
