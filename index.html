@@ -243,7 +243,7 @@
       background: #ffffff;
       border: 3px solid var(--accent-color);
       border-radius: 20px;
-      max-width: 420px;
+      max-width: 450px;
       width: 100%;
       padding: 20px;
       box-shadow: 0 12px 32px rgba(0,0,0,0.25);
@@ -305,7 +305,7 @@
     <div class="sidebar">
       <div class="character-container">
         <div class="dialogue-box" id="character-text">¡Hola! ¿Qué se te antoja hoy? ✨ ¡Los mejores precios VIP!</div>
-        <img src="https://via.placeholder.com/220x260/dcfce7/16a34a?text=Avatar+JBstore+Verde" class="character-img" id="mascot" onclick="talkMascot()" alt="Mascota JBstore VIP">
+        <img src="https://via.placeholder.com/220x260/dcfce7/16a34a?text=Avatar+JBstore+Celeste" class="character-img" id="mascot" onclick="talkMascot()" alt="Mascota JBstore VIP">
       </div>
 
       <div class="tabs-vertical">
@@ -379,40 +379,21 @@
 
         <hr style="margin: 16px 0; border: none; border-top: 1px solid var(--border-color);">
 
-        <h4 style="margin-bottom: 8px;">6. Personalización del Mascot / Avatar VIP</h4>
-        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">Pega los enlaces de las imágenes PNG sin fondo para cada gesto del personaje:</p>
+        <h4 style="margin-bottom: 8px;">6. Personalización del Avatar VIP (10 Gestos)</h4>
+        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">Pega los enlaces de las imágenes PNG y las frases para las 10 reacciones:</p>
 
-        <div class="field-group">
-          <label>1. Gesto Bienvenida (Saludo):</label>
-          <input type="text" id="avatar-img-0" placeholder="URL Imagen PNG">
-          <input type="text" id="avatar-text-0" placeholder="Frase de Bienvenida" style="margin-top: 4px;">
-        </div>
+        <div class="field-group"><label>1. Bienvenida (Saludo):</label><input type="text" id="avatar-img-0" placeholder="URL PNG"><input type="text" id="avatar-text-0" placeholder="Frase" style="margin-top: 4px;"></div>
+        <div class="field-group"><label>2. Pensativa:</label><input type="text" id="avatar-img-1" placeholder="URL PNG"><input type="text" id="avatar-text-1" placeholder="Frase" style="margin-top: 4px;"></div>
+        <div class="field-group"><label>3. Entusiasmada (Juegos):</label><input type="text" id="avatar-img-2" placeholder="URL PNG"><input type="text" id="avatar-text-2" placeholder="Frase" style="margin-top: 4px;"></div>
+        <div class="field-group"><label>4. Sorprendida (Ofertas):</label><input type="text" id="avatar-img-3" placeholder="URL PNG"><input type="text" id="avatar-text-3" placeholder="Frase" style="margin-top: 4px;"></div>
+        <div class="field-group"><label>5. Guiño (Streaming):</label><input type="text" id="avatar-img-4" placeholder="URL PNG"><input type="text" id="avatar-text-4" placeholder="Frase" style="margin-top: 4px;"></div>
+        <div class="field-group"><label>6. Apenada (Stock):</label><input type="text" id="avatar-img-5" placeholder="URL PNG"><input type="text" id="avatar-text-5" placeholder="Frase" style="margin-top: 4px;"></div>
+        <div class="field-group"><label>7. Agradecida (Modal Compra):</label><input type="text" id="avatar-img-6" placeholder="URL PNG"><input type="text" id="avatar-text-6" placeholder="Frase" style="margin-top: 4px;"></div>
+        <div class="field-group"><label>8. Victoria (WhatsApp):</label><input type="text" id="avatar-img-7" placeholder="URL PNG"><input type="text" id="avatar-text-7" placeholder="Frase" style="margin-top: 4px;"></div>
+        <div class="field-group"><label>9. Explicativa (Licencias):</label><input type="text" id="avatar-img-8" placeholder="URL PNG"><input type="text" id="avatar-text-8" placeholder="Frase" style="margin-top: 4px;"></div>
+        <div class="field-group"><label>10. Feliz / Despedida:</label><input type="text" id="avatar-img-9" placeholder="URL PNG"><input type="text" id="avatar-text-9" placeholder="Frase" style="margin-top: 4px;"></div>
 
-        <div class="field-group">
-          <label>2. Gesto Pensativa:</label>
-          <input type="text" id="avatar-img-1" placeholder="URL Imagen PNG">
-          <input type="text" id="avatar-text-1" placeholder="Frase Pensativa" style="margin-top: 4px;">
-        </div>
-
-        <div class="field-group">
-          <label>3. Gesto Entusiasmada:</label>
-          <input type="text" id="avatar-img-2" placeholder="URL Imagen PNG">
-          <input type="text" id="avatar-text-2" placeholder="Frase Entusiasmada" style="margin-top: 4px;">
-        </div>
-
-        <div class="field-group">
-          <label>4. Gesto Apenada (Revisando Stock):</label>
-          <input type="text" id="avatar-img-3" placeholder="URL Imagen PNG">
-          <input type="text" id="avatar-text-3" placeholder="Frase Apenada" style="margin-top: 4px;">
-        </div>
-
-        <div class="field-group">
-          <label>5. Gesto Victoria (Pedido Listo):</label>
-          <input type="text" id="avatar-img-4" placeholder="URL Imagen PNG">
-          <input type="text" id="avatar-text-4" placeholder="Frase de Victoria" style="margin-top: 4px;">
-        </div>
-
-        <button class="buy-btn" style="background: #2563eb; margin-bottom: 16px;" onclick="saveAvatarSettings()">Guardar Configuración Avatar</button>
+        <button class="buy-btn" style="background: #2563eb; margin-bottom: 16px;" onclick="saveAvatarSettings()">Guardar 10 Gestos del Avatar</button>
 
         <hr style="margin: 16px 0; border: none; border-top: 1px solid var(--border-color);">
 
@@ -429,18 +410,23 @@
   <script>
     const PHONE_NUMBER = "58412546526";
 
-    // DATOS DE FÁBRICA CON TUS PRODUCTOS Y LAS FRASES DEL AVATAR
+    // ESTRUCTURA CON 10 FRASES Y GESTOS POR DEFECTO
     const initialData = {
       tasaBs: 1047,
       pagoMovil: "Banco Mercantil | 0414-3633915 | V-17545455",
       binanceId: "246763246 (JBstore)",
       estadoAtencion: "ONLINE",
       avatarConfig: [
-        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=Gesto+Saludo+Verde", text: "¡Hola! ¿Qué se te antoja hoy? ✨ ¡Los mejores precios VIP!" },
-        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=Gesto+Pensativa", text: "¿Buscabas algo especial? Dime y lo resolvemos de una." },
-        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=Gesto+Entusiasmada", text: "¡Los mejores pases están aquí! Calidad 100% garantizada. 🎯" },
-        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=Gesto+Apenada", text: "¡Oops! Déjame revisar el stock... ¡A veces vuelan! 😅" },
-        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=Gesto+Victoria", text: "¡Pedido listo! Te veo en WhatsApp para entregártelo. 📲💨" }
+        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=1.+Saludo", text: "¡Hola! ¿Qué se te antoja hoy? ✨ ¡Los mejores precios VIP!" },
+        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=2.+Pensativa", text: "¿Buscabas algo especial? Dime y lo resolvemos de una." },
+        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=3.+Entusiasmada", text: "¡Los mejores pases y recargas están aquí! Calidad 100% garantizada. 🎯" },
+        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=4.+Sorprendida", text: "¡Wao, esa oferta está brutal! No te la pienses mucho." },
+        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=5.+Guiño", text: "¿Tarde de películas o series? Tengo las mejores pantallas activas. 🍿" },
+        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=6.+Apenada", text: "¡Oops! Déjame revisar el stock... ¡A veces las recargas vuelan! 😅" },
+        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=7.+Agradecida", text: "¡Gracias por preferirnos! Tu apoyo vale oro para JBstore. 🩵" },
+        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=8.+Victoria", text: "¡Pedido listo! Te veo en WhatsApp para entregártelo volando. 📲💨" },
+        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=9.+Explicativa", text: "¿Licencias activas para tus consolas o PC? Todo 100% legal y seguro. 🔑" },
+        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=10.+Feliz", text: "¡Vuelve pronto! Aquí estaremos esperándote con más promos." }
       ],
       productos: [
         {
@@ -512,7 +498,7 @@
       isAudioPlaying = !isAudioPlaying;
     }
 
-    // INTERACCIÓN AL TOCAR EL PERSONAJE
+    // INTERACCIÓN AL TOCAR EL PERSONAJE (ROTA POR LOS 10 GESTOS)
     function talkMascot() {
       if (!storeData.avatarConfig || storeData.avatarConfig.length === 0) return;
       
@@ -575,6 +561,12 @@
       const sel = document.getElementById('modal-variant-select');
       sel.innerHTML = selectedProduct.variantes.map(v => `<option value="${v.usdt}">${v.nombre} — ${v.usdt.toFixed(2)} USDT</option>`).join('');
 
+      // Cambiar a gesto 7 (Agradecida) al abrir compra
+      if (storeData.avatarConfig && storeData.avatarConfig[6]) {
+        document.getElementById('character-text').innerText = storeData.avatarConfig[6].text;
+        if (storeData.avatarConfig[6].img) document.getElementById('mascot').src = storeData.avatarConfig[6].img;
+      }
+
       updateModalTotal();
       openModal('modal-buy');
     }
@@ -621,7 +613,7 @@
         document.getElementById('admin-body').style.display = 'block';
         document.getElementById('admin-tasa').value = storeData.tasaBs;
 
-        // Cargar campos del Avatar
+        // Cargar campos de los 10 Gestos del Avatar
         if (storeData.avatarConfig) {
           storeData.avatarConfig.forEach((g, idx) => {
             if (document.getElementById(`avatar-img-${idx}`)) document.getElementById(`avatar-img-${idx}`).value = g.img || '';
@@ -639,14 +631,18 @@
 
     function saveAvatarSettings() {
       storeData.avatarConfig = [];
-      for (let i = 0; i < 5; i++) {
-        let img = document.getElementById(`avatar-img-${i}`).value.trim();
-        let text = document.getElementById(`avatar-text-${i}`).value.trim();
-        storeData.avatarConfig.push({ img, text });
+      for (let i = 0; i < 10; i++) {
+        let imgInput = document.getElementById(`avatar-img-${i}`);
+        let textInput = document.getElementById(`avatar-text-${i}`);
+        if (imgInput && textInput) {
+          let img = imgInput.value.trim();
+          let text = textInput.value.trim();
+          storeData.avatarConfig.push({ img, text });
+        }
       }
       saveToStorage();
       talkMascot();
-      alert("¡Configuración del Avatar VIP guardada con éxito!");
+      alert("¡Se guardaron los 10 gestos del Avatar VIP con éxito!");
     }
 
     function exportData() {
