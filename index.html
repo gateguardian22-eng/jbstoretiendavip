@@ -29,7 +29,6 @@
       padding-bottom: 80px;
     }
 
-    /* BARRA SUPERIOR (HEADER) */
     header {
       display: flex;
       justify-content: space-between;
@@ -44,7 +43,6 @@
     }
 
     .logo-vip { font-size: 20px; font-weight: 900; color: var(--accent-color); letter-spacing: 1px; }
-    
     .header-btns { display: flex; gap: 8px; align-items: center; }
 
     .sound-btn, .admin-btn {
@@ -60,7 +58,6 @@
     }
     .sound-btn:hover, .admin-btn:hover { background: var(--accent-color); color: #fff; }
 
-    /* LAYOUT PRINCIPAL (DOS COLUMNAS) */
     .app-layout {
       display: flex;
       flex: 1;
@@ -71,7 +68,6 @@
       gap: 20px;
     }
 
-    /* COLUMNA IZQUIERDA: PERSONAJE & PESTAÑAS */
     .sidebar {
       width: 320px;
       display: flex;
@@ -88,7 +84,6 @@
       margin-bottom: 16px;
     }
 
-    /* BOCADILLO DE DIÁLOGO */
     .dialogue-box {
       background: #ffffff;
       border: 2px solid var(--accent-color);
@@ -129,7 +124,6 @@
     }
     .character-img:active { transform: scale(0.95); }
 
-    /* MENÚ VERTICAL DE PESTAÑAS */
     .tabs-vertical {
       width: 100%;
       display: flex;
@@ -160,7 +154,6 @@
       box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
     }
 
-    /* COLUMNA DERECHA: TIENDA / CUADRÍCULA */
     .shop-area {
       flex: 1;
       display: grid;
@@ -225,7 +218,6 @@
     }
     .buy-btn:hover { background: var(--accent-hover); }
 
-    /* MODALES ESTILO GACHA */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -243,11 +235,20 @@
       background: #ffffff;
       border: 3px solid var(--accent-color);
       border-radius: 20px;
-      max-width: 450px;
+      max-width: 480px;
       width: 100%;
       padding: 20px;
       box-shadow: 0 12px 32px rgba(0,0,0,0.25);
       position: relative;
+    }
+
+    .modal-banner-img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border-color);
     }
 
     .field-group { margin-bottom: 12px; text-align: left; }
@@ -275,7 +276,15 @@
       font-size: 18px; font-weight: 900; cursor: pointer;
     }
 
-    /* RESPONSIVE CELULAR */
+    .admin-nav-tabs {
+      display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto;
+    }
+    .admin-tab-btn {
+      padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-color);
+      background: #f3f4f6; font-size: 11px; font-weight: 700; cursor: pointer;
+    }
+    .admin-tab-btn.active { background: var(--accent-color); color: #fff; border-color: var(--accent-color); }
+
     @media (max-width: 768px) {
       .app-layout { flex-direction: column; }
       .sidebar { width: 100%; }
@@ -287,7 +296,6 @@
 </head>
 <body>
 
-  <!-- REPRODUCTOR DE AUDIO BGM -->
   <audio id="bgm" loop>
     <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" type="audio/mp3">
   </audio>
@@ -301,11 +309,10 @@
   </header>
 
   <div class="app-layout">
-    <!-- BARRA LATERAL CON PERSONAJE -->
     <div class="sidebar">
       <div class="character-container">
         <div class="dialogue-box" id="character-text">¡Hola! ¿Qué se te antoja hoy? ✨ ¡Los mejores precios VIP!</div>
-        <img src="https://via.placeholder.com/220x260/dcfce7/16a34a?text=Avatar+JBstore+Celeste" class="character-img" id="mascot" onclick="talkMascot()" alt="Mascota JBstore VIP">
+        <img src="img/avatar/gesto1.png" class="character-img" id="mascot" onclick="talkMascot()" alt="Mascota JBstore VIP">
       </div>
 
       <div class="tabs-vertical">
@@ -315,15 +322,15 @@
       </div>
     </div>
 
-    <!-- ÁREA DE PRODUCTOS TIENDA -->
     <div class="shop-area" id="shop-grid"></div>
   </div>
 
-  <!-- MODAL DE COMPRA CLIENTE -->
+  <!-- MODAL DE COMPRA EXTENDIDO CON IMAGEN Y DESCRIPCIÓN -->
   <div class="modal-overlay" id="modal-buy">
     <div class="modal-gacha">
-      <h3 id="modal-title" style="margin-bottom: 8px; text-align: center;">--</h3>
-      <p style="font-size: 12px; color: #666; text-align: center; margin-bottom: 12px;" id="modal-desc">--</p>
+      <img id="modal-img-banner" src="" class="modal-banner-img" alt="Detalle del producto">
+      <h3 id="modal-title" style="margin-bottom: 6px; text-align: center;">--</h3>
+      <p style="font-size: 12px; color: var(--text-muted); text-align: center; margin-bottom: 12px; line-height: 1.4;" id="modal-desc">--</p>
 
       <div class="field-group">
         <label>Selecciona Opción / Variante:</label>
@@ -355,7 +362,7 @@
 
   <!-- MODAL PANEL ADMIN PRO -->
   <div class="modal-overlay" id="admin-modal">
-    <div class="modal-gacha" style="max-width: 500px; max-height: 90vh; overflow-y: auto;">
+    <div class="modal-gacha" style="max-width: 520px; max-height: 90vh; overflow-y: auto;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
         <h3>⚙️ Panel Administrador Pro</h3>
         <button onclick="closeModal('admin-modal')" style="background:none; border:none; font-size:20px; cursor:pointer;">&times;</button>
@@ -370,7 +377,7 @@
       </div>
 
       <div id="admin-body" style="display: none;">
-        <h4 style="margin-bottom: 8px;">1. Tasa y Métodos de Pago</h4>
+        <h4 style="margin-bottom: 8px;">1. Tasa y Configuración General</h4>
         <div class="field-group">
           <label>Tasa BS / USDT:</label>
           <input type="number" step="0.01" id="admin-tasa">
@@ -379,21 +386,65 @@
 
         <hr style="margin: 16px 0; border: none; border-top: 1px solid var(--border-color);">
 
+        <h4 style="margin-bottom: 8px;">2. Gestión de Productos por Categoría</h4>
+        <div class="admin-nav-tabs">
+          <button class="admin-tab-btn active" onclick="filterAdminCategory('Juegos', this)">🎮 Juegos</button>
+          <button class="admin-tab-btn" onclick="filterAdminCategory('Streaming', this)">📺 Streaming</button>
+          <button class="admin-tab-btn" onclick="filterAdminCategory('Licencias', this)">🔑 Licencias</button>
+        </div>
+
+        <div class="field-group">
+          <label>Seleccionar Producto para Editar:</label>
+          <select id="edit-prod-select" onchange="loadProductToEdit()">
+            <option value="NEW">➕ -- CREAR NUEVO PRODUCTO --</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label>Título del Producto:</label>
+          <input type="text" id="prod-title" placeholder="Ej: Roblox — Robux">
+        </div>
+        <div class="field-group">
+          <label>Descripción Corta (En la tarjeta):</label>
+          <input type="text" id="prod-desc-short" placeholder="Ej: Recarga directa por ID">
+        </div>
+        <div class="field-group">
+          <label>Descripción Larga (Al abrir para comprar):</label>
+          <textarea id="prod-desc-long" rows="2" placeholder="Ej: Entrega de 5 a 15 mins. No requiere contraseña."></textarea>
+        </div>
+        <div class="field-group">
+          <label>URL Imagen Tarjeta Principal:</label>
+          <input type="text" id="prod-img-card" placeholder="URL Imagen Tarjeta">
+        </div>
+        <div class="field-group">
+          <label>URL Imagen Detalle Modal (Afiche/Banner):</label>
+          <input type="text" id="prod-img-modal" placeholder="URL Afiche Explicativo">
+        </div>
+        <div class="field-group">
+          <label>Variantes (Formato: Opción:PrecioUSDT separado por coma):</label>
+          <input type="text" id="prod-variants" placeholder="Ej: 80 Robux:1.27, 500 Robux:5.90">
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+          <button class="buy-btn" style="background: #16a34a;" id="btn-save-prod" onclick="saveProduct()">Guardar Producto</button>
+          <button class="buy-btn" style="background: #dc2626; display: none;" id="btn-delete-prod" onclick="deleteProduct()">Eliminar</button>
+        </div>
+
+        <hr style="margin: 16px 0; border: none; border-top: 1px solid var(--border-color);">
+
         <h4 style="margin-bottom: 8px;">6. Personalización del Avatar VIP (10 Gestos)</h4>
-        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">Pega los enlaces de las imágenes PNG y las frases para las 10 reacciones:</p>
+        <div class="field-group"><label>1. Bienvenida (Saludo):</label><input type="text" id="avatar-img-0"><input type="text" id="avatar-text-0" style="margin-top:4px;"></div>
+        <div class="field-group"><label>2. Pensativa:</label><input type="text" id="avatar-img-1"><input type="text" id="avatar-text-1" style="margin-top:4px;"></div>
+        <div class="field-group"><label>3. Entusiasmada (Juegos):</label><input type="text" id="avatar-img-2"><input type="text" id="avatar-text-2" style="margin-top:4px;"></div>
+        <div class="field-group"><label>4. Sorprendida (Ofertas):</label><input type="text" id="avatar-img-3"><input type="text" id="avatar-text-3" style="margin-top:4px;"></div>
+        <div class="field-group"><label>5. Guiño (Streaming):</label><input type="text" id="avatar-img-4"><input type="text" id="avatar-text-4" style="margin-top:4px;"></div>
+        <div class="field-group"><label>6. Apenada (Stock):</label><input type="text" id="avatar-img-5"><input type="text" id="avatar-text-5" style="margin-top:4px;"></div>
+        <div class="field-group"><label>7. Agradecida (Modal Compra):</label><input type="text" id="avatar-img-6"><input type="text" id="avatar-text-6" style="margin-top:4px;"></div>
+        <div class="field-group"><label>8. Victoria (WhatsApp):</label><input type="text" id="avatar-img-7"><input type="text" id="avatar-text-7" style="margin-top:4px;"></div>
+        <div class="field-group"><label>9. Explicativa (Licencias):</label><input type="text" id="avatar-img-8"><input type="text" id="avatar-text-8" style="margin-top:4px;"></div>
+        <div class="field-group"><label>10. Feliz / Despedida:</label><input type="text" id="avatar-img-9"><input type="text" id="avatar-text-9" style="margin-top:4px;"></div>
 
-        <div class="field-group"><label>1. Bienvenida (Saludo):</label><input type="text" id="avatar-img-0" placeholder="URL PNG"><input type="text" id="avatar-text-0" placeholder="Frase" style="margin-top: 4px;"></div>
-        <div class="field-group"><label>2. Pensativa:</label><input type="text" id="avatar-img-1" placeholder="URL PNG"><input type="text" id="avatar-text-1" placeholder="Frase" style="margin-top: 4px;"></div>
-        <div class="field-group"><label>3. Entusiasmada (Juegos):</label><input type="text" id="avatar-img-2" placeholder="URL PNG"><input type="text" id="avatar-text-2" placeholder="Frase" style="margin-top: 4px;"></div>
-        <div class="field-group"><label>4. Sorprendida (Ofertas):</label><input type="text" id="avatar-img-3" placeholder="URL PNG"><input type="text" id="avatar-text-3" placeholder="Frase" style="margin-top: 4px;"></div>
-        <div class="field-group"><label>5. Guiño (Streaming):</label><input type="text" id="avatar-img-4" placeholder="URL PNG"><input type="text" id="avatar-text-4" placeholder="Frase" style="margin-top: 4px;"></div>
-        <div class="field-group"><label>6. Apenada (Stock):</label><input type="text" id="avatar-img-5" placeholder="URL PNG"><input type="text" id="avatar-text-5" placeholder="Frase" style="margin-top: 4px;"></div>
-        <div class="field-group"><label>7. Agradecida (Modal Compra):</label><input type="text" id="avatar-img-6" placeholder="URL PNG"><input type="text" id="avatar-text-6" placeholder="Frase" style="margin-top: 4px;"></div>
-        <div class="field-group"><label>8. Victoria (WhatsApp):</label><input type="text" id="avatar-img-7" placeholder="URL PNG"><input type="text" id="avatar-text-7" placeholder="Frase" style="margin-top: 4px;"></div>
-        <div class="field-group"><label>9. Explicativa (Licencias):</label><input type="text" id="avatar-img-8" placeholder="URL PNG"><input type="text" id="avatar-text-8" placeholder="Frase" style="margin-top: 4px;"></div>
-        <div class="field-group"><label>10. Feliz / Despedida:</label><input type="text" id="avatar-img-9" placeholder="URL PNG"><input type="text" id="avatar-text-9" placeholder="Frase" style="margin-top: 4px;"></div>
-
-        <button class="buy-btn" style="background: #2563eb; margin-bottom: 16px;" onclick="saveAvatarSettings()">Guardar 10 Gestos del Avatar</button>
+        <button class="buy-btn" style="background: #2563eb; margin-bottom: 16px;" onclick="saveAvatarSettings()">Guardar Configuración Avatar</button>
 
         <hr style="margin: 16px 0; border: none; border-top: 1px solid var(--border-color);">
 
@@ -410,31 +461,32 @@
   <script>
     const PHONE_NUMBER = "58412546526";
 
-    // ESTRUCTURA CON 10 FRASES Y GESTOS POR DEFECTO
     const initialData = {
       tasaBs: 1047,
       pagoMovil: "Banco Mercantil | 0414-3633915 | V-17545455",
       binanceId: "246763246 (JBstore)",
       estadoAtencion: "ONLINE",
       avatarConfig: [
-        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=1.+Saludo", text: "¡Hola! ¿Qué se te antoja hoy? ✨ ¡Los mejores precios VIP!" },
-        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=2.+Pensativa", text: "¿Buscabas algo especial? Dime y lo resolvemos de una." },
-        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=3.+Entusiasmada", text: "¡Los mejores pases y recargas están aquí! Calidad 100% garantizada. 🎯" },
-        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=4.+Sorprendida", text: "¡Wao, esa oferta está brutal! No te la pienses mucho." },
-        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=5.+Guiño", text: "¿Tarde de películas o series? Tengo las mejores pantallas activas. 🍿" },
-        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=6.+Apenada", text: "¡Oops! Déjame revisar el stock... ¡A veces las recargas vuelan! 😅" },
-        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=7.+Agradecida", text: "¡Gracias por preferirnos! Tu apoyo vale oro para JBstore. 🩵" },
-        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=8.+Victoria", text: "¡Pedido listo! Te veo en WhatsApp para entregártelo volando. 📲💨" },
-        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=9.+Explicativa", text: "¿Licencias activas para tus consolas o PC? Todo 100% legal y seguro. 🔑" },
-        { img: "https://via.placeholder.com/220x260/dcfce7/16a34a?text=10.+Feliz", text: "¡Vuelve pronto! Aquí estaremos esperándote con más promos." }
+        { img: "img/avatar/gesto1.png", text: "¡Hola! ¿Qué se te antoja hoy? ✨ ¡Los mejores precios VIP!" },
+        { img: "img/avatar/gesto2.png", text: "¿Buscabas algo especial? Dime y lo resolvemos de una." },
+        { img: "img/avatar/gesto3.png", text: "¡Los mejores pases y recargas están aquí! Calidad 100% garantizada. 🎯" },
+        { img: "img/avatar/gesto4.png", text: "¡Wao, esa oferta está brutal! No te la pienses mucho." },
+        { img: "img/avatar/gesto5.png", text: "¿Tarde de películas o series? Tengo las mejores pantallas activas. 🍿" },
+        { img: "img/avatar/gesto6.png", text: "¡Oops! Déjame revisar el stock... ¡A veces las recargas vuelan! 😅" },
+        { img: "img/avatar/gesto7.png", text: "¡Gracias por preferirnos! Tu apoyo vale oro para JBstore. 🩵" },
+        { img: "img/avatar/gesto8.png", text: "¡Pedido listo! Te veo en WhatsApp para entregártelo volando. 📲💨" },
+        { img: "img/avatar/gesto9.png", text: "¿Licencias activas para tus consolas o PC? Todo 100% legal y seguro. 🔑" },
+        { img: "img/avatar/gesto10.png", text: "¡Vuelve pronto! Aquí estaremos esperándote con más promos." }
       ],
       productos: [
         {
           id: "1",
           categoria: "Juegos",
-          titulo: "Roblox — Robux ",
-          desc: "Recarga Vía acceso",
-          img: "https://lh3.googleusercontent.com/d/1QZieXFAfc8Hcyjht7Qxb-FtdOhoDJaon",
+          titulo: "Roblox — Robux",
+          descShort: "Recarga Vía acceso",
+          descLong: "Recargas rápidas y seguras a tu cuenta de Roblox. Entrega promedio de 5 a 15 minutos en nuestro horario activo.",
+          imgCard: "https://lh3.googleusercontent.com/d/1QZieXFAfc8Hcyjht7Qxb-FtdOhoDJaon",
+          imgModal: "https://lh3.googleusercontent.com/d/1QZieXFAfc8Hcyjht7Qxb-FtdOhoDJaon",
           variantes: [
             { nombre: "80 Robux", usdt: 1.27 },
             { nombre: "500 Robux", usdt: 5.9 },
@@ -445,27 +497,16 @@
           id: "1791774483508",
           categoria: "Juegos",
           titulo: "Call of Duty Mobile",
-          desc: "Recarga Via acceso",
-          img: "https://lh3.googleusercontent.com/d/1jajT3d5s0q1f_tkUCMSsP_89Vb73yWub",
+          descShort: "Recarga Via acceso",
+          descLong: "Acredita COD Points a tu cuenta de Activision de forma segura para pases de batalla y ruletas.",
+          imgCard: "https://lh3.googleusercontent.com/d/1jajT3d5s0q1f_tkUCMSsP_89Vb73yWub",
+          imgModal: "https://lh3.googleusercontent.com/d/1jajT3d5s0q1f_tkUCMSsP_89Vb73yWub",
           variantes: [
             { nombre: "80 CodP", usdt: 1.25 },
             { nombre: "420 CodP", usdt: 6 },
             { nombre: "880 CodP", usdt: 11.8 },
             { nombre: "2400 CodP", usdt: 25.9 },
             { nombre: "5000 CodP", usdt: 52.5 }
-          ]
-        },
-        {
-          id: "1791775364890",
-          categoria: "Juegos",
-          titulo: "Free Fire Latam",
-          desc: "Recarga VIA ID",
-          img: "https://via.placeholder.com/200?text=Free+Fire",
-          variantes: [
-            { nombre: "100 Diamantes", usdt: 1.3 },
-            { nombre: "300 Diamantes", usdt: 3.8 },
-            { nombre: "500 Diamantes", usdt: 5.9 },
-            { nombre: "1060 Diamantes", usdt: 11.8 }
           ]
         }
       ]
@@ -478,6 +519,7 @@
     let currentQty = 1;
     let selectedProduct = null;
     let currentCategory = "Juegos";
+    let adminCategory = "Juegos";
     let lastGestureIndex = -1;
 
     function saveToStorage() {
@@ -492,13 +534,12 @@
         audio.pause();
         btn.innerText = "🔊 Música: OFF";
       } else {
-        audio.play().catch(() => alert("Toca la pantalla para autorizar el reproductor de sonido."));
+        audio.play().catch(() => alert("Toca la pantalla para autorizar el sonido."));
         btn.innerText = "🎶 Música: ON";
       }
       isAudioPlaying = !isAudioPlaying;
     }
 
-    // INTERACCIÓN AL TOCAR EL PERSONAJE (ROTA POR LOS 10 GESTOS)
     function talkMascot() {
       if (!storeData.avatarConfig || storeData.avatarConfig.length === 0) return;
       
@@ -526,7 +567,7 @@
       const grid = document.getElementById('shop-grid');
       grid.innerHTML = '';
 
-      const filtered = storeData.productos.filter(p => p.categoria === cat || cat === 'TODOS');
+      const filtered = storeData.productos.filter(p => p.categoria === cat);
 
       if (filtered.length === 0) {
         grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 32px; color: var(--text-muted);">Sin artículos en esta categoría aún.</div>`;
@@ -539,9 +580,9 @@
           <div class="item-card">
             <div>
               <span class="stock-tag">Disponible</span>
-              <img src="${p.img}" class="item-img" alt="${p.titulo}">
+              <img src="${p.imgCard}" class="item-img" alt="${p.titulo}">
               <div class="item-title">${p.titulo}</div>
-              <div class="item-desc">${p.desc}</div>
+              <div class="item-desc">${p.descShort || ''}</div>
             </div>
             <div>
               <div class="item-price">Desde ${minPrice.toFixed(2)} USDT</div>
@@ -556,12 +597,12 @@
       selectedProduct = storeData.productos.find(p => p.id === prodId);
       currentQty = 1;
       document.getElementById('modal-title').innerText = selectedProduct.titulo;
-      document.getElementById('modal-desc').innerText = selectedProduct.desc;
+      document.getElementById('modal-desc').innerText = selectedProduct.descLong || selectedProduct.descShort || '';
+      document.getElementById('modal-img-banner').src = selectedProduct.imgModal || selectedProduct.imgCard;
 
       const sel = document.getElementById('modal-variant-select');
       sel.innerHTML = selectedProduct.variantes.map(v => `<option value="${v.usdt}">${v.nombre} — ${v.usdt.toFixed(2)} USDT</option>`).join('');
 
-      // Cambiar a gesto 7 (Agradecida) al abrir compra
       if (storeData.avatarConfig && storeData.avatarConfig[6]) {
         document.getElementById('character-text').innerText = storeData.avatarConfig[6].text;
         if (storeData.avatarConfig[6].img) document.getElementById('mascot').src = storeData.avatarConfig[6].img;
@@ -606,21 +647,127 @@
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-    /* PANEL ADMIN */
+    /* PANEL ADMIN CON PESTAÑAS Y PRODUCTO AMPLIADO */
     function authAdmin() {
       if (document.getElementById('admin-pin').value === "24.07.12") {
         document.getElementById('admin-auth').style.display = 'none';
         document.getElementById('admin-body').style.display = 'block';
         document.getElementById('admin-tasa').value = storeData.tasaBs;
 
-        // Cargar campos de los 10 Gestos del Avatar
         if (storeData.avatarConfig) {
           storeData.avatarConfig.forEach((g, idx) => {
             if (document.getElementById(`avatar-img-${idx}`)) document.getElementById(`avatar-img-${idx}`).value = g.img || '';
             if (document.getElementById(`avatar-text-${idx}`)) document.getElementById(`avatar-text-${idx}`).value = g.text || '';
           });
         }
+        filterAdminCategory('Juegos');
       } else { alert("PIN Incorrecto"); }
+    }
+
+    function filterAdminCategory(cat, element) {
+      adminCategory = cat;
+      if (element) {
+        document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+        element.classList.add('active');
+      }
+      populateAdminProductDropdown();
+    }
+
+    function populateAdminProductDropdown() {
+      let sel = document.getElementById('edit-prod-select');
+      sel.innerHTML = '<option value="NEW">➕ -- CREAR NUEVO PRODUCTO --</option>';
+      const filtered = storeData.productos.filter(p => p.categoria === adminCategory);
+      filtered.forEach(p => { sel.innerHTML += `<option value="${p.id}">✏️ ${p.titulo}</option>`; });
+      loadProductToEdit();
+    }
+
+    function loadProductToEdit() {
+      let selectedId = document.getElementById('edit-prod-select').value;
+      let btnDelete = document.getElementById('btn-delete-prod');
+      let btnSave = document.getElementById('btn-save-prod');
+
+      if (selectedId === "NEW") {
+        document.getElementById('prod-title').value = '';
+        document.getElementById('prod-desc-short').value = '';
+        document.getElementById('prod-desc-long').value = '';
+        document.getElementById('prod-img-card').value = '';
+        document.getElementById('prod-img-modal').value = '';
+        document.getElementById('prod-variants').value = '';
+        btnDelete.style.display = 'none';
+        btnSave.innerText = "Guardar Producto";
+      } else {
+        let p = storeData.productos.find(prod => prod.id === selectedId);
+        if (p) {
+          document.getElementById('prod-title').value = p.titulo;
+          document.getElementById('prod-desc-short').value = p.descShort || '';
+          document.getElementById('prod-desc-long').value = p.descLong || '';
+          document.getElementById('prod-img-card').value = p.imgCard || '';
+          document.getElementById('prod-img-modal').value = p.imgModal || '';
+          document.getElementById('prod-variants').value = p.variantes.map(v => `${v.nombre}:${v.usdt}`).join(', ');
+          btnDelete.style.display = 'block';
+          btnSave.innerText = "Actualizar Cambios";
+        }
+      }
+    }
+
+    function saveProduct() {
+      let selectedId = document.getElementById('edit-prod-select').value;
+      let title = document.getElementById('prod-title').value.trim();
+      let descShort = document.getElementById('prod-desc-short').value.trim();
+      let descLong = document.getElementById('prod-desc-long').value.trim();
+      let imgCard = document.getElementById('prod-img-card').value.trim();
+      let imgModal = document.getElementById('prod-img-modal').value.trim();
+      let rawVar = document.getElementById('prod-variants').value.trim();
+
+      if (!title || !rawVar) return alert("Ingresa el título y las variantes.");
+
+      let vars = rawVar.split(',').map(v => {
+        let [n, p] = v.split(':');
+        return { nombre: n.trim(), usdt: parseFloat(p.trim()) };
+      });
+
+      if (selectedId === "NEW") {
+        storeData.productos.push({
+          id: Date.now().toString(),
+          categoria: adminCategory,
+          titulo: title,
+          descShort,
+          descLong,
+          imgCard,
+          imgModal,
+          variantes: vars
+        });
+        alert("Producto creado exitosamente.");
+      } else {
+        let idx = storeData.productos.findIndex(p => p.id === selectedId);
+        if (idx !== -1) {
+          storeData.productos[idx] = {
+            id: selectedId,
+            categoria: adminCategory,
+            titulo: title,
+            descShort,
+            descLong,
+            imgCard,
+            imgModal,
+            variantes: vars
+          };
+          alert("Producto actualizado correctamente.");
+        }
+      }
+
+      saveToStorage();
+      populateAdminProductDropdown();
+    }
+
+    function deleteProduct() {
+      let selectedId = document.getElementById('edit-prod-select').value;
+      if (selectedId === "NEW") return;
+      if (confirm("¿Estás seguro de eliminar este producto?")) {
+        storeData.productos = storeData.productos.filter(p => p.id !== selectedId);
+        saveToStorage();
+        populateAdminProductDropdown();
+        alert("Producto eliminado.");
+      }
     }
 
     function saveGeneralSettings() {
@@ -675,7 +822,6 @@
       reader.readAsText(file);
     }
 
-    // Inicializar
     renderShop('Juegos');
   </script>
 </body>
