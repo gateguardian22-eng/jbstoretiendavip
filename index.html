@@ -12,10 +12,9 @@
       --border-color: #334155;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
-      --card-inner: #0f172a;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
 
     body {
       background: var(--bg-gradient);
@@ -83,9 +82,11 @@
       height: 240px;
       object-fit: contain;
       cursor: pointer;
+      background: #1e293b;
+      border-radius: 12px;
     }
 
-    .tabs-vertical { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+    .tabs-vertical { width: 100%; display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
 
     .tab-item {
       padding: 12px;
@@ -143,6 +144,7 @@
       object-fit: cover;
       border-radius: 6px;
       margin-bottom: 6px;
+      background: #334155;
     }
 
     .gacha-title-wrapper {
@@ -160,17 +162,6 @@
       width: 100%;
     }
 
-    .gacha-title-scroll {
-      display: inline-block;
-      padding-left: 100%;
-      animation: marquee 8s linear infinite;
-    }
-
-    @keyframes marquee {
-      0% { transform: translate(0, 0); }
-      100% { transform: translate(-100%, 0); }
-    }
-
     .gacha-price-bar {
       background: var(--accent-color);
       color: #fff;
@@ -180,7 +171,6 @@
       font-weight: 900;
     }
 
-    /* MODALES */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -241,6 +231,10 @@
 </head>
 <body>
 
+  <audio id="bgm" loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3" type="audio/mp3">
+  </audio>
+
   <header>
     <div class="logo-vip">✨ JBstore VIP</div>
     <div class="header-btns">
@@ -252,9 +246,9 @@
   <div class="app-layout">
     <div class="sidebar">
       <div class="dialogue-box" id="character-text">¡Hola! ¿Qué se te antoja hoy? ✨ ¡Los mejores precios VIP!</div>
-      <img src="img/avatar/gesto1.png" class="character-img" id="mascot" onclick="talkMascot()" alt="Avatar" onerror="this.src='img/avatar/gesto1.png'">
+      <img src="img/avatar/gesto1.png" class="character-img" id="mascot" onclick="talkMascot()" alt="Avatar" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'240\'><rect width=\'200\' height=\'240\' fill=\'%231e293b\'/><text x=\'50%25\' y=\'50%25\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'%2310b981\' font-weight=\'bold\'>Avatar JBstore</text></svg>';">
       
-      <div class="tabs-vertical" style="margin-top: 12px;">
+      <div class="tabs-vertical">
         <button class="tab-item active" onclick="switchCategory('Juegos', this)">🎮 Juegos</button>
         <button class="tab-item" onclick="switchCategory('Streaming', this)">📺 Streaming</button>
         <button class="tab-item" onclick="switchCategory('Licencias', this)">🔑 Licencias</button>
@@ -293,7 +287,7 @@
     </div>
   </div>
 
-  <!-- MODAL ADMIN PRO COMPLETO -->
+  <!-- MODAL ADMIN PRO -->
   <div class="modal-overlay" id="admin-modal">
     <div class="modal-gacha">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -319,7 +313,7 @@
 
         <hr style="margin: 12px 0; border-color: var(--border-color);">
 
-        <h4 style="margin-bottom: 6px;">2. Gestión de Productos por Categoría</h4>
+        <h4 style="margin-bottom: 6px;">2. Gestión de Productos</h4>
         <div class="admin-nav-tabs">
           <button class="admin-tab-btn active" onclick="filterAdminCategory('Juegos', this)">🎮 Juegos</button>
           <button class="admin-tab-btn" onclick="filterAdminCategory('Streaming', this)">📺 Streaming</button>
@@ -342,12 +336,12 @@
           <input type="text" id="prod-badge" placeholder="x1">
         </div>
         <div class="field-group">
-          <label>Texto del Botón (Ej: 1 TOKEN):</label>
+          <label>Texto del Botón (Ej: 🎟️ 1 TOKEN):</label>
           <input type="text" id="prod-price-text" placeholder="🎟️ 1 TOKEN">
         </div>
         <div class="field-group">
           <label>Descripción Larga (Modal):</label>
-          <textarea id="prod-desc-long" rows="2" placeholder="Detalles de la oferta o canje"></textarea>
+          <textarea id="prod-desc-long" rows="2" placeholder="Detalles de la oferta"></textarea>
         </div>
         <div class="field-group">
           <label>URL Imagen Tarjeta:</label>
@@ -365,29 +359,14 @@
 
         <hr style="margin: 12px 0; border-color: var(--border-color);">
 
-        <h4 style="margin-bottom: 6px;">3. Avatar (10 Gestos)</h4>
-        <div class="field-group"><label>1. Bienvenida:</label><input type="text" id="avatar-img-0"><input type="text" id="avatar-text-0" style="margin-top:2px;"></div>
-        <div class="field-group"><label>2. Pensativa:</label><input type="text" id="avatar-img-1"><input type="text" id="avatar-text-1" style="margin-top:2px;"></div>
-        <div class="field-group"><label>3. Entusiasmada:</label><input type="text" id="avatar-img-2"><input type="text" id="avatar-text-2" style="margin-top:2px;"></div>
-        <div class="field-group"><label>4. Sorprendida:</label><input type="text" id="avatar-img-3"><input type="text" id="avatar-text-3" style="margin-top:2px;"></div>
-        <div class="field-group"><label>5. Guiño:</label><input type="text" id="avatar-img-4"><input type="text" id="avatar-text-4" style="margin-top:2px;"></div>
-        <div class="field-group"><label>6. Apenada:</label><input type="text" id="avatar-img-5"><input type="text" id="avatar-text-5" style="margin-top:2px;"></div>
-        <div class="field-group"><label>7. Agradecida:</label><input type="text" id="avatar-img-6"><input type="text" id="avatar-text-6" style="margin-top:2px;"></div>
-        <div class="field-group"><label>8. Victoria:</label><input type="text" id="avatar-img-7"><input type="text" id="avatar-text-7" style="margin-top:2px;"></div>
-        <div class="field-group"><label>9. Explicativa:</label><input type="text" id="avatar-img-8"><input type="text" id="avatar-text-8" style="margin-top:2px;"></div>
-        <div class="field-group"><label>10. Feliz:</label><input type="text" id="avatar-img-9"><input type="text" id="avatar-text-9" style="margin-top:2px;"></div>
-
+        <h4 style="margin-bottom: 6px;">3. Personalización del Avatar (10 Gestos)</h4>
+        <div id="avatar-fields-container"></div>
         <button class="buy-btn" style="background: #3b82f6; margin-bottom: 12px;" onclick="saveAvatarSettings()">Guardar Gestos Avatar</button>
 
         <hr style="margin: 12px 0; border-color: var(--border-color);">
 
-        <h4 style="margin-bottom: 6px;">4. Respaldos & Mantenimiento</h4>
-        <div style="display: flex; gap: 6px; margin-bottom: 10px;">
-          <button class="buy-btn" style="background: #0284c7;" onclick="exportData()">📥 Exportar JSON</button>
-          <button class="buy-btn" style="background: #8b5cf6;" onclick="triggerImport()">📤 Importar JSON</button>
-          <input type="file" id="import-file" style="display: none;" accept=".json" onchange="importData(event)">
-        </div>
-        <button class="buy-btn" style="background: #ef4444;" onclick="resetApp()">🧹 Resetear Memoria Local</button>
+        <h4 style="margin-bottom: 6px;">4. Mantenimiento</h4>
+        <button class="buy-btn" style="background: #ef4444;" onclick="resetApp()">🧹 Limpiar Memoria Local</button>
       </div>
     </div>
   </div>
@@ -400,7 +379,7 @@
       avatarConfig: [
         { img: "img/avatar/gesto1.png", text: "¡Hola! ¿Qué se te antoja hoy? ✨ ¡Los mejores precios VIP!" },
         { img: "img/avatar/gesto2.png", text: "¿Buscabas algo especial? Dime y lo resolvemos de una." },
-        { img: "img/avatar/gesto3.png", text: "¡Los mejores pases y recargas están aquí! Calidad 100% garantizada. 🎯" },
+        { img: "img/avatar/gesto3.png", text: "¡Los mejores pases están aquí! Calidad 100% garantizada. 🎯" },
         { img: "img/avatar/gesto4.png", text: "¡Wao, esa oferta está brutal! No te la pienses mucho." },
         { img: "img/avatar/gesto5.png", text: "¿Tarde de películas o series? Tengo las mejores pantallas activas. 🍿" },
         { img: "img/avatar/gesto6.png", text: "¡Oops! Déjame revisar el stock... ¡A veces las recargas vuelan! 😅" },
@@ -433,23 +412,23 @@
       ]
     };
 
-    let localRaw = localStorage.getItem('jbstore_vip_data');
-    let storeData = null;
-
-    try {
-      storeData = localRaw ? JSON.parse(localRaw) : null;
-    } catch(e) { storeData = null; }
-
-    if (!storeData || !storeData.productos || storeData.productos.length === 0) {
-      storeData = defaultData;
-      localStorage.setItem('jbstore_vip_data', JSON.stringify(storeData));
-    }
-
+    let storeData = defaultData;
     let currentCategory = "Juegos";
     let adminCategory = "Juegos";
     let selectedProd = null;
     let isAudioPlaying = false;
     let lastGestureIndex = -1;
+
+    // Cargar datos
+    try {
+      const raw = localStorage.getItem('jbstore_vip_data');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.productos && parsed.productos.length > 0) {
+          storeData = parsed;
+        }
+      }
+    } catch(e) { storeData = defaultData; }
 
     function renderShop(cat) {
       const grid = document.getElementById('shop-grid');
@@ -463,13 +442,12 @@
 
       list.forEach(p => {
         let badge = p.badge || "x1";
-        let titleClass = (p.titulo && p.titulo.length > 16) ? "gacha-title gacha-title-scroll" : "gacha-title";
         grid.innerHTML += `
           <div class="gacha-card" onclick="openBuyModal('${p.id}')">
             <span class="gacha-badge">${badge}</span>
-            <img src="${p.imgCard}" class="gacha-img" onerror="this.src='img/avatar/gesto1.png'">
+            <img src="${p.imgCard}" class="gacha-img" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\'><rect width=\'100\' height=\'100\' fill=\'%23334155\'/></svg>';">
             <div class="gacha-title-wrapper">
-              <div class="${titleClass}">${p.titulo}</div>
+              <div class="gacha-title">${p.titulo}</div>
             </div>
             <div class="gacha-price-bar">${p.priceText || '1 TOKEN'}</div>
           </div>
@@ -487,6 +465,8 @@
 
     function openBuyModal(id) {
       selectedProd = storeData.productos.find(p => p.id === id);
+      if (!selectedProd) return;
+
       document.getElementById('modal-title').innerText = selectedProd.titulo;
       document.getElementById('modal-desc').innerText = selectedProd.descLong || '';
       
@@ -497,7 +477,7 @@
       } else { imgBanner.style.display = 'none'; }
 
       const sel = document.getElementById('modal-variant-select');
-      sel.innerHTML = selectedProd.variantes.map(v => `<option value="${v.usdt}">${v.nombre} — ${v.usdt.toFixed(2)} USDT</option>`).join('');
+      sel.innerHTML = (selectedProd.variantes || []).map(v => `<option value="${v.usdt}">${v.nombre} — ${v.usdt.toFixed(2)} USDT</option>`).join('');
       
       updateModalTotal();
       openModal('modal-buy');
@@ -524,12 +504,7 @@
 
     function talkMascot() {
       if (!storeData.avatarConfig || storeData.avatarConfig.length === 0) return;
-      let randomIndex;
-      do {
-        randomIndex = Math.floor(Math.random() * storeData.avatarConfig.length);
-      } while (randomIndex === lastGestureIndex && storeData.avatarConfig.length > 1);
-
-      lastGestureIndex = randomIndex;
+      let randomIndex = Math.floor(Math.random() * storeData.avatarConfig.length);
       const g = storeData.avatarConfig[randomIndex];
       document.getElementById('character-text').innerText = g.text;
       if (g.img) document.getElementById('mascot').src = g.img;
@@ -542,25 +517,33 @@
         audio.pause();
         btn.innerText = "🔊 Música: OFF";
       } else {
-        audio.play().catch(() => alert("Toca la pantalla para autorizar el sonido."));
+        audio.play().catch(() => {});
         btn.innerText = "🎶 Música: ON";
       }
       isAudioPlaying = !isAudioPlaying;
     }
 
-    /* ADMIN JS */
+    /* ADMIN */
     function authAdmin() {
       if (document.getElementById('admin-pin').value === "24.07.12") {
         document.getElementById('admin-auth').style.display = 'none';
         document.getElementById('admin-body').style.display = 'block';
         document.getElementById('admin-tasa').value = storeData.tasaBs || 1047;
 
-        if (storeData.avatarConfig) {
-          storeData.avatarConfig.forEach((g, idx) => {
-            if (document.getElementById(`avatar-img-${idx}`)) document.getElementById(`avatar-img-${idx}`).value = g.img || '';
-            if (document.getElementById(`avatar-text-${idx}`)) document.getElementById(`avatar-text-${idx}`).value = g.text || '';
-          });
+        // Render avatar fields dynamically
+        const avatarContainer = document.getElementById('avatar-fields-container');
+        avatarContainer.innerHTML = '';
+        for (let i = 0; i < 10; i++) {
+          const g = (storeData.avatarConfig && storeData.avatarConfig[i]) ? storeData.avatarConfig[i] : { img:'', text:'' };
+          avatarContainer.innerHTML += `
+            <div class="field-group">
+              <label>Gesto ${i+1}:</label>
+              <input type="text" id="avatar-img-${i}" value="${g.img}" placeholder="URL Imagen">
+              <input type="text" id="avatar-text-${i}" value="${g.text}" placeholder="Frase" style="margin-top:2px;">
+            </div>
+          `;
         }
+
         filterAdminCategory('Juegos');
       } else { alert("PIN Incorrecto"); }
     }
@@ -599,4 +582,110 @@
       } else {
         let p = storeData.productos.find(prod => prod.id === selectedId);
         if (p) {
-          document
+          document.getElementById('prod-title').value = p.titulo;
+          document.getElementById('prod-badge').value = p.badge || 'x1';
+          document.getElementById('prod-price-text').value = p.priceText || '🎟️ 1 TOKEN';
+          document.getElementById('prod-desc-long').value = p.descLong || '';
+          document.getElementById('prod-img-card').value = p.imgCard || '';
+          document.getElementById('prod-variants').value = p.variantes ? p.variantes.map(v => `${v.nombre}:${v.usdt}`).join(', ') : '';
+          btnDelete.style.display = 'block';
+          btnSave.innerText = "Actualizar Cambios";
+        }
+      }
+    }
+
+    function saveProduct() {
+      let selectedId = document.getElementById('edit-prod-select').value;
+      let title = document.getElementById('prod-title').value.trim();
+      let badge = document.getElementById('prod-badge').value.trim() || 'x1';
+      let priceText = document.getElementById('prod-price-text').value.trim() || '🎟️ 1 TOKEN';
+      let descLong = document.getElementById('prod-desc-long').value.trim();
+      let imgCard = document.getElementById('prod-img-card').value.trim();
+      let rawVar = document.getElementById('prod-variants').value.trim();
+
+      if (!title || !rawVar) return alert("Ingresa el título y las variantes.");
+
+      let vars = rawVar.split(',').map(v => {
+        let [n, p] = v.split(':');
+        return { nombre: n.trim(), usdt: parseFloat(p ? p.trim() : '0') };
+      });
+
+      if (selectedId === "NEW") {
+        storeData.productos.push({
+          id: Date.now().toString(),
+          categoria: adminCategory,
+          titulo: title,
+          badge,
+          priceText,
+          descLong,
+          imgCard,
+          variantes: vars
+        });
+      } else {
+        let idx = storeData.productos.findIndex(p => p.id === selectedId);
+        if (idx !== -1) {
+          storeData.productos[idx] = {
+            id: selectedId,
+            categoria: adminCategory,
+            titulo: title,
+            badge,
+            priceText,
+            descLong,
+            imgCard,
+            variantes: vars
+          };
+        }
+      }
+
+      saveToStorage();
+      populateAdminProductDropdown();
+      alert("¡Producto guardado!");
+    }
+
+    function deleteProduct() {
+      let selectedId = document.getElementById('edit-prod-select').value;
+      if (selectedId === "NEW") return;
+      if (confirm("¿Eliminar este producto?")) {
+        storeData.productos = storeData.productos.filter(p => p.id !== selectedId);
+        saveToStorage();
+        populateAdminProductDropdown();
+      }
+    }
+
+    function saveGeneralSettings() {
+      storeData.tasaBs = parseFloat(document.getElementById('admin-tasa').value) || storeData.tasaBs;
+      saveToStorage();
+      alert("Tasa actualizada.");
+    }
+
+    function saveAvatarSettings() {
+      storeData.avatarConfig = [];
+      for (let i = 0; i < 10; i++) {
+        let imgInput = document.getElementById(`avatar-img-${i}`);
+        let textInput = document.getElementById(`avatar-text-${i}`);
+        if (imgInput && textInput) {
+          storeData.avatarConfig.push({ img: imgInput.value.trim(), text: textInput.value.trim() });
+        }
+      }
+      saveToStorage();
+      alert("¡Gestos actualizados!");
+    }
+
+    function saveToStorage() {
+      localStorage.setItem('jbstore_vip_data', JSON.stringify(storeData));
+      renderShop(currentCategory);
+    }
+
+    function resetApp() {
+      localStorage.removeItem('jbstore_vip_data');
+      location.reload();
+    }
+
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    // Inicializar
+    renderShop('Juegos');
+  </script>
+</body>
+</html>
