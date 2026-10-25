@@ -16,13 +16,16 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
 
     body {
-      background: linear-gradient(rgba(15, 23, 42, 0.88), rgba(30, 41, 59, 0.92)), 
-                  url('https://images.unsplash.com/photo-1555680202-c86f0e12f086?auto=format&fit=crop&w=1200&q=75') center/cover no-repeat fixed;
+      background-color: var(--bg-dark);
       color: var(--text-main);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       padding-bottom: 40px;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
     }
 
     header {
@@ -100,10 +103,11 @@
 
     .shop-frame {
       flex: 1;
-      background: rgba(15, 23, 42, 0.85);
+      background: rgba(15, 23, 42, 0.88);
       border: 2px solid var(--border-color);
       border-radius: 16px;
       padding: 16px;
+      backdrop-filter: blur(6px);
     }
 
     .shop-grid {
@@ -171,17 +175,6 @@
       text-align: center;
       display: inline-block;
       width: 100%;
-    }
-
-    .gacha-title-scroll {
-      display: inline-block;
-      padding-left: 100%;
-      animation: marquee 8s linear infinite;
-    }
-
-    @keyframes marquee {
-      0% { transform: translate(0, 0); }
-      100% { transform: translate(-100%, 0); }
     }
 
     .gacha-subtitle {
@@ -359,12 +352,16 @@
       </div>
 
       <div id="admin-body" style="display: none;">
-        <h4 style="margin-bottom: 6px;">1. Tasa de Cambio</h4>
+        <h4 style="margin-bottom: 6px;">1. Configuración General & Fondo</h4>
         <div class="field-group">
           <label>Tasa BS / USDT:</label>
           <input type="number" step="0.01" id="admin-tasa">
         </div>
-        <button class="buy-btn" onclick="saveGeneralSettings()" style="margin-bottom:12px;">Guardar Tasa</button>
+        <div class="field-group">
+          <label>URL Imagen de Fondo (Tienda JPEG/PNG):</label>
+          <input type="text" id="admin-bg-url" placeholder="Ej: https://... o img/fondo.jpg">
+        </div>
+        <button class="buy-btn" onclick="saveGeneralSettings()" style="margin-bottom:12px;">💾 Guardar Configuración</button>
 
         <hr style="margin: 12px 0; border-color: var(--border-color);">
 
@@ -440,6 +437,7 @@
 
     const defaultData = {
       tasaBs: 1047,
+      bgImage: "https://images.unsplash.com/photo-1555680202-c86f0e12f086?auto=format&fit=crop&w=1200&q=75",
       avatarConfig: [
         { img: "img/avatar/gesto1.png", text: "¡Hola! ¿Qué se te antoja hoy? ✨ ¡Los mejores precios VIP!" },
         { img: "img/avatar/gesto2.png", text: "¿Buscabas algo especial? Dime y lo resolvemos de una." },
@@ -494,7 +492,14 @@
       }
     } catch(e) { storeData = defaultData; }
 
+    // Aplicar fondo guardado
+    function applyBackground() {
+      const bg = storeData.bgImage || defaultData.bgImage;
+      document.body.style.backgroundImage = `linear-gradient(rgba(15, 23, 42, 0.88), rgba(30, 41, 59, 0.92)), url('${bg}')`;
+    }
+
     function renderShop(cat) {
+      applyBackground();
       const grid = document.getElementById('shop-grid');
       grid.innerHTML = '';
       const list = storeData.productos.filter(p => p.categoria === cat);
@@ -607,6 +612,7 @@
         document.getElementById('admin-auth').style.display = 'none';
         document.getElementById('admin-body').style.display = 'block';
         document.getElementById('admin-tasa').value = storeData.tasaBs || 1047;
+        document.getElementById('admin-bg-url').value = storeData.bgImage || '';
 
         const avatarContainer = document.getElementById('avatar-fields-container');
         avatarContainer.innerHTML = '';
@@ -736,8 +742,9 @@
 
     function saveGeneralSettings() {
       storeData.tasaBs = parseFloat(document.getElementById('admin-tasa').value) || storeData.tasaBs;
+      storeData.bgImage = document.getElementById('admin-bg-url').value.trim() || defaultData.bgImage;
       saveToStorage();
-      alert("Tasa actualizada.");
+      alert("¡Configuración y fondo actualizados!");
     }
 
     function saveAvatarSettings() {
