@@ -8,7 +8,7 @@
     :root {
       --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
       --accent-color: #10b981;
-      --card-bg: #1e293b;
+      --accent-hover: #059669;
       --border-color: #334155;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
@@ -82,8 +82,6 @@
       height: 240px;
       object-fit: contain;
       cursor: pointer;
-      background: #1e293b;
-      border-radius: 12px;
     }
 
     .tabs-vertical { width: 100%; display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
@@ -111,66 +109,104 @@
 
     .shop-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
       gap: 12px;
     }
 
+    /* TARJETA ESTILO GACHA DE LA CAPTURA */
     .gacha-card {
-      background: #0f172a;
-      border: 2px solid var(--border-color);
-      border-radius: 10px;
-      padding: 8px;
-      text-align: center;
-      cursor: pointer;
+      background: #ffffff;
+      border: 2px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       position: relative;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: transform 0.15s ease-in-out;
     }
-    .gacha-card:hover { border-color: var(--accent-color); }
+    .gacha-card:hover { transform: translateY(-3px); border-color: var(--accent-color); }
 
-    .gacha-badge {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      background: rgba(0,0,0,0.8);
-      color: #fff;
-      font-size: 11px;
-      font-weight: 800;
-      padding: 2px 6px;
-      border-radius: 4px;
+    .gacha-img-box {
+      width: 100%;
+      height: 110px;
+      background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%);
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 6px;
     }
 
     .gacha-img {
-      width: 100%;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 6px;
-      margin-bottom: 6px;
-      background: #334155;
+      width: 90%;
+      height: 90%;
+      object-fit: contain;
+    }
+
+    .gacha-badge {
+      position: absolute;
+      bottom: 4px;
+      right: 6px;
+      color: #0f172a;
+      font-size: 16px;
+      font-weight: 900;
+      text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
     }
 
     .gacha-title-wrapper {
       width: 100%;
       overflow: hidden;
       white-space: nowrap;
-      margin-bottom: 6px;
+      margin-bottom: 2px;
     }
 
     .gacha-title {
       font-size: 12px;
       font-weight: 800;
-      color: #fff;
+      color: #0f172a;
+      text-align: center;
       display: inline-block;
       width: 100%;
     }
 
-    .gacha-price-bar {
-      background: var(--accent-color);
-      color: #fff;
-      padding: 6px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 900;
+    .gacha-title-scroll {
+      display: inline-block;
+      padding-left: 100%;
+      animation: marquee 7s linear infinite;
     }
 
+    @keyframes marquee {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-100%, 0); }
+    }
+
+    .gacha-subtitle {
+      font-size: 10px;
+      color: #64748b;
+      font-weight: 700;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+
+    .gacha-price-bar {
+      width: 100%;
+      background: #2d6a4f;
+      color: #ffffff;
+      padding: 6px 8px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* MODAL */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -263,7 +299,7 @@
   <!-- MODAL COMPRA -->
   <div class="modal-overlay" id="modal-buy">
     <div class="modal-gacha">
-      <img id="modal-img-banner" src="" style="width:100%; height:140px; object-fit:cover; border-radius:8px; margin-bottom:10px; display:none;">
+      <img id="modal-img-banner" src="" style="width:100%; height:140px; object-fit:contain; border-radius:8px; margin-bottom:10px; background:#e2e8f0; display:none;">
       <h3 id="modal-title" style="text-align: center; margin-bottom: 6px;">--</h3>
       <p id="modal-desc" style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; text-align: center; line-height:1.4;">--</p>
       
@@ -313,7 +349,7 @@
 
         <hr style="margin: 12px 0; border-color: var(--border-color);">
 
-        <h4 style="margin-bottom: 6px;">2. Gestión de Productos</h4>
+        <h4 style="margin-bottom: 6px;">2. Gestión de Productos por Categoría</h4>
         <div class="admin-nav-tabs">
           <button class="admin-tab-btn active" onclick="filterAdminCategory('Juegos', this)">🎮 Juegos</button>
           <button class="admin-tab-btn" onclick="filterAdminCategory('Streaming', this)">📺 Streaming</button>
@@ -336,16 +372,20 @@
           <input type="text" id="prod-badge" placeholder="x1">
         </div>
         <div class="field-group">
-          <label>Texto del Botón (Ej: 🎟️ 1 TOKEN):</label>
-          <input type="text" id="prod-price-text" placeholder="🎟️ 1 TOKEN">
+          <label>Subtítulo (Ej: Disponible 10 veces):</label>
+          <input type="text" id="prod-subtitle" placeholder="Disponible 10 veces">
+        </div>
+        <div class="field-group">
+          <label>Valor de Token / Precio (Ej: 100 o 1 TOKEN):</label>
+          <input type="text" id="prod-price-text" placeholder="1 TOKEN">
         </div>
         <div class="field-group">
           <label>Descripción Larga (Modal):</label>
           <textarea id="prod-desc-long" rows="2" placeholder="Detalles de la oferta"></textarea>
         </div>
         <div class="field-group">
-          <label>URL Imagen Tarjeta:</label>
-          <input type="text" id="prod-img-card" placeholder="URL de la imagen">
+          <label>URL Imagen del Producto:</label>
+          <input type="text" id="prod-img-card" placeholder="URL Imagen">
         </div>
         <div class="field-group">
           <label>Variantes (Opción:PrecioUSDT separado por comas):</label>
@@ -353,19 +393,24 @@
         </div>
 
         <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-          <button class="buy-btn" id="btn-save-prod" onclick="saveProduct()">Guardar Producto</button>
-          <button class="buy-btn" style="background: #ef4444; display: none;" id="btn-delete-prod" onclick="deleteProduct()">Eliminar</button>
+          <button class="buy-btn" id="btn-save-prod" onclick="saveProduct()">💾 GUARDAR PRODUCTO</button>
+          <button class="buy-btn" style="background: #ef4444; display: none;" id="btn-delete-prod" onclick="deleteProduct()">🗑️ Eliminar</button>
         </div>
 
         <hr style="margin: 12px 0; border-color: var(--border-color);">
 
         <h4 style="margin-bottom: 6px;">3. Personalización del Avatar (10 Gestos)</h4>
         <div id="avatar-fields-container"></div>
-        <button class="buy-btn" style="background: #3b82f6; margin-bottom: 12px;" onclick="saveAvatarSettings()">Guardar Gestos Avatar</button>
+        <button class="buy-btn" style="background: #3b82f6; margin-bottom: 12px;" onclick="saveAvatarSettings()">💾 Guardar Gestos Avatar</button>
 
         <hr style="margin: 12px 0; border-color: var(--border-color);">
 
-        <h4 style="margin-bottom: 6px;">4. Mantenimiento</h4>
+        <h4 style="margin-bottom: 6px;">4. Respaldo JSON</h4>
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+          <button class="buy-btn" style="background: #0284c7;" onclick="exportData()">📥 Exportar JSON</button>
+          <button class="buy-btn" style="background: #8b5cf6;" onclick="triggerImport()">📤 Importar JSON</button>
+          <input type="file" id="import-file" style="display: none;" accept=".json" onchange="importData(event)">
+        </div>
         <button class="buy-btn" style="background: #ef4444;" onclick="resetApp()">🧹 Limpiar Memoria Local</button>
       </div>
     </div>
@@ -392,9 +437,10 @@
         {
           id: "roblox-1",
           categoria: "Juegos",
-          titulo: "RECARGA ROBLOX",
+          titulo: "Combate de Rango C",
           badge: "x1",
-          priceText: "🎟️ 1 TOKEN",
+          subtitle: "Disponible 10 veces",
+          priceText: "100",
           descLong: "Canjea 1 Token de tu membresía activa + $4.99 USDT en lugar del precio regular de $6.00 USDT. Entrega de 5 a 15 minutos Vía ID.",
           imgCard: "img/avatar/gesto1.png",
           variantes: [{ nombre: "Canje con 1 Token", usdt: 4.99 }, { nombre: "Precio Regular", usdt: 6.00 }]
@@ -404,7 +450,8 @@
           categoria: "Juegos",
           titulo: "CALL OF DUTY MOBILE",
           badge: "x1",
-          priceText: "🎟️ 1 TOKEN",
+          subtitle: "Disponible 5 veces",
+          priceText: "1 TOKEN",
           descLong: "COD Points directos por acceso de Activision para miembros VIP activos.",
           imgCard: "img/avatar/gesto3.png",
           variantes: [{ nombre: "80 COD Points", usdt: 1.25 }, { nombre: "2400 COD Points", usdt: 25.90 }]
@@ -417,9 +464,7 @@
     let adminCategory = "Juegos";
     let selectedProd = null;
     let isAudioPlaying = false;
-    let lastGestureIndex = -1;
 
-    // Cargar datos
     try {
       const raw = localStorage.getItem('jbstore_vip_data');
       if (raw) {
@@ -442,14 +487,24 @@
 
       list.forEach(p => {
         let badge = p.badge || "x1";
+        let sub = p.subtitle || "Disponible";
+        let isLongTitle = p.titulo.length > 15;
+        let titleClass = isLongTitle ? "gacha-title gacha-title-scroll" : "gacha-title";
+
         grid.innerHTML += `
           <div class="gacha-card" onclick="openBuyModal('${p.id}')">
-            <span class="gacha-badge">${badge}</span>
-            <img src="${p.imgCard}" class="gacha-img" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\'><rect width=\'100\' height=\'100\' fill=\'%23334155\'/></svg>';">
-            <div class="gacha-title-wrapper">
-              <div class="gacha-title">${p.titulo}</div>
+            <div class="gacha-img-box">
+              <img src="${p.imgCard}" class="gacha-img" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\'><rect width=\'100\' height=\'100\' fill=\'%23cbd5e1\'/></svg>';">
+              <span class="gacha-badge">${badge}</span>
             </div>
-            <div class="gacha-price-bar">${p.priceText || '1 TOKEN'}</div>
+            <div class="gacha-title-wrapper">
+              <div class="${titleClass}">${p.titulo}</div>
+            </div>
+            <div class="gacha-subtitle">${sub}</div>
+            <div class="gacha-price-bar">
+              <span>💳</span>
+              <span>${p.priceText || '100'}</span>
+            </div>
           </div>
         `;
       });
@@ -530,7 +585,6 @@
         document.getElementById('admin-body').style.display = 'block';
         document.getElementById('admin-tasa').value = storeData.tasaBs || 1047;
 
-        // Render avatar fields dynamically
         const avatarContainer = document.getElementById('avatar-fields-container');
         avatarContainer.innerHTML = '';
         for (let i = 0; i < 10; i++) {
@@ -573,23 +627,25 @@
       if (selectedId === "NEW") {
         document.getElementById('prod-title').value = '';
         document.getElementById('prod-badge').value = 'x1';
-        document.getElementById('prod-price-text').value = '🎟️ 1 TOKEN';
+        document.getElementById('prod-subtitle').value = 'Disponible 10 veces';
+        document.getElementById('prod-price-text').value = '1 TOKEN';
         document.getElementById('prod-desc-long').value = '';
         document.getElementById('prod-img-card').value = '';
         document.getElementById('prod-variants').value = '';
         btnDelete.style.display = 'none';
-        btnSave.innerText = "Guardar Producto";
+        btnSave.innerText = "💾 GUARDAR PRODUCTO";
       } else {
         let p = storeData.productos.find(prod => prod.id === selectedId);
         if (p) {
           document.getElementById('prod-title').value = p.titulo;
           document.getElementById('prod-badge').value = p.badge || 'x1';
-          document.getElementById('prod-price-text').value = p.priceText || '🎟️ 1 TOKEN';
+          document.getElementById('prod-subtitle').value = p.subtitle || 'Disponible';
+          document.getElementById('prod-price-text').value = p.priceText || '1 TOKEN';
           document.getElementById('prod-desc-long').value = p.descLong || '';
           document.getElementById('prod-img-card').value = p.imgCard || '';
           document.getElementById('prod-variants').value = p.variantes ? p.variantes.map(v => `${v.nombre}:${v.usdt}`).join(', ') : '';
           btnDelete.style.display = 'block';
-          btnSave.innerText = "Actualizar Cambios";
+          btnSave.innerText = "💾 ACTUALIZAR CAMBIOS";
         }
       }
     }
@@ -598,7 +654,8 @@
       let selectedId = document.getElementById('edit-prod-select').value;
       let title = document.getElementById('prod-title').value.trim();
       let badge = document.getElementById('prod-badge').value.trim() || 'x1';
-      let priceText = document.getElementById('prod-price-text').value.trim() || '🎟️ 1 TOKEN';
+      let subtitle = document.getElementById('prod-subtitle').value.trim() || 'Disponible';
+      let priceText = document.getElementById('prod-price-text').value.trim() || '1 TOKEN';
       let descLong = document.getElementById('prod-desc-long').value.trim();
       let imgCard = document.getElementById('prod-img-card').value.trim();
       let rawVar = document.getElementById('prod-variants').value.trim();
@@ -616,6 +673,7 @@
           categoria: adminCategory,
           titulo: title,
           badge,
+          subtitle,
           priceText,
           descLong,
           imgCard,
@@ -629,6 +687,7 @@
             categoria: adminCategory,
             titulo: title,
             badge,
+            subtitle,
             priceText,
             descLong,
             imgCard,
@@ -639,7 +698,7 @@
 
       saveToStorage();
       populateAdminProductDropdown();
-      alert("¡Producto guardado!");
+      alert("¡Producto guardado exitosamente!");
     }
 
     function deleteProduct() {
@@ -674,6 +733,36 @@
     function saveToStorage() {
       localStorage.setItem('jbstore_vip_data', JSON.stringify(storeData));
       renderShop(currentCategory);
+    }
+
+    function exportData() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(storeData, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `JBstore_VIP_Respaldo_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function triggerImport() { document.getElementById('import-file').click(); }
+
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (imported && imported.productos) {
+            storeData = imported;
+            saveToStorage();
+            talkMascot();
+            alert("¡Respaldo restaurado con éxito!");
+          } else { alert("El archivo no es un respaldo válido."); }
+        } catch (err) { alert("Error al leer el archivo JSON."); }
+      };
+      reader.readAsText(file);
     }
 
     function resetApp() {
