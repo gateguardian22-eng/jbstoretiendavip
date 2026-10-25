@@ -12,6 +12,7 @@
       --border-color: #334155;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
+      --card-inner: #0f172a;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
@@ -39,7 +40,9 @@
 
     .logo-vip { font-size: 20px; font-weight: 900; color: var(--accent-color); }
 
-    .admin-btn {
+    .header-btns { display: flex; gap: 8px; align-items: center; }
+
+    .sound-btn, .admin-btn {
       background: #1e293b;
       border: 2px solid var(--accent-color);
       color: var(--accent-color);
@@ -118,8 +121,21 @@
       padding: 8px;
       text-align: center;
       cursor: pointer;
+      position: relative;
     }
     .gacha-card:hover { border-color: var(--accent-color); }
+
+    .gacha-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(0,0,0,0.8);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
 
     .gacha-img {
       width: 100%;
@@ -129,14 +145,30 @@
       margin-bottom: 6px;
     }
 
+    .gacha-title-wrapper {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      margin-bottom: 6px;
+    }
+
     .gacha-title {
       font-size: 12px;
       font-weight: 800;
       color: #fff;
-      margin-bottom: 6px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .gacha-title-scroll {
+      display: inline-block;
+      padding-left: 100%;
+      animation: marquee 8s linear infinite;
+    }
+
+    @keyframes marquee {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-100%, 0); }
     }
 
     .gacha-price-bar {
@@ -148,7 +180,7 @@
       font-weight: 900;
     }
 
-    /* MODAL */
+    /* MODALES */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -164,10 +196,21 @@
       background: #1e293b;
       border: 2px solid var(--accent-color);
       border-radius: 16px;
-      max-width: 400px;
+      max-width: 480px;
       width: 100%;
       padding: 20px;
       color: #fff;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .field-group { margin-bottom: 12px; text-align: left; }
+    .field-group label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; }
+
+    select, input, textarea {
+      width: 100%; padding: 8px; font-size: 12px;
+      border: 1px solid var(--border-color); border-radius: 6px;
+      background: #0f172a; color: #fff; outline: none;
     }
 
     .buy-btn {
@@ -179,8 +222,15 @@
       border-radius: 8px;
       font-weight: 800;
       cursor: pointer;
-      margin-top: 10px;
+      margin-top: 8px;
     }
+
+    .admin-nav-tabs { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; }
+    .admin-tab-btn {
+      padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-color);
+      background: #0f172a; color: #fff; font-size: 11px; font-weight: 700; cursor: pointer;
+    }
+    .admin-tab-btn.active { background: var(--accent-color); border-color: var(--accent-color); }
 
     @media (max-width: 768px) {
       .app-layout { flex-direction: column; }
@@ -193,13 +243,16 @@
 
   <header>
     <div class="logo-vip">✨ JBstore VIP</div>
-    <button class="admin-btn" onclick="openModal('admin-modal')">⚙️ Admin</button>
+    <div class="header-btns">
+      <button class="sound-btn" onclick="toggleAudio()" id="audio-toggle">🔊 Música: OFF</button>
+      <button class="admin-btn" onclick="openModal('admin-modal')">⚙️ Admin</button>
+    </div>
   </header>
 
   <div class="app-layout">
     <div class="sidebar">
       <div class="dialogue-box" id="character-text">¡Hola! ¿Qué se te antoja hoy? ✨ ¡Los mejores precios VIP!</div>
-      <img src="img/avatar/gesto1.png" class="character-img" id="mascot" onclick="talkMascot()" alt="Avatar">
+      <img src="img/avatar/gesto1.png" class="character-img" id="mascot" onclick="talkMascot()" alt="Avatar" onerror="this.src='img/avatar/gesto1.png'">
       
       <div class="tabs-vertical" style="margin-top: 12px;">
         <button class="tab-item active" onclick="switchCategory('Juegos', this)">🎮 Juegos</button>
@@ -216,12 +269,23 @@
   <!-- MODAL COMPRA -->
   <div class="modal-overlay" id="modal-buy">
     <div class="modal-gacha">
-      <h3 id="modal-title" style="text-align: center; margin-bottom: 8px;">--</h3>
-      <p id="modal-desc" style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; text-align: center;">--</p>
+      <img id="modal-img-banner" src="" style="width:100%; height:140px; object-fit:cover; border-radius:8px; margin-bottom:10px; display:none;">
+      <h3 id="modal-title" style="text-align: center; margin-bottom: 6px;">--</h3>
+      <p id="modal-desc" style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; text-align: center; line-height:1.4;">--</p>
       
-      <div style="text-align: center; margin-bottom: 12px;">
-        <label style="font-size: 11px; display: block; margin-bottom: 4px;">OPCIÓN / PRECIO:</label>
-        <select id="modal-variant-select" style="width: 100%; padding: 8px; border-radius: 6px; background: #0f172a; color: #fff; border: 1px solid var(--border-color);"></select>
+      <div class="field-group">
+        <label>Selecciona Opción / Precio:</label>
+        <select id="modal-variant-select" onchange="updateModalTotal()"></select>
+      </div>
+
+      <div style="text-align: center; margin: 12px 0;">
+        <div style="font-size: 18px; font-weight: 900; color: var(--accent-color);" id="modal-total-usdt">0.00 USDT</div>
+        <div style="font-size: 12px; font-weight: 700; color: #34d399;" id="modal-total-bs">~ 0.00 BS</div>
+      </div>
+
+      <div class="field-group">
+        <label>Datos para procesar tu entrega:</label>
+        <textarea id="client-account-data" rows="2" placeholder="Ej: ID de jugador o Usuario"></textarea>
       </div>
 
       <button class="buy-btn" onclick="confirmOrder()">📲 Confirmar por WhatsApp</button>
@@ -229,17 +293,101 @@
     </div>
   </div>
 
-  <!-- MODAL ADMIN -->
+  <!-- MODAL ADMIN PRO COMPLETO -->
   <div class="modal-overlay" id="admin-modal">
     <div class="modal-gacha">
-      <h3 style="margin-bottom: 12px;">⚙️ Admin</h3>
-      <input type="password" id="admin-pin" placeholder="Ingresa PIN (24.07.12)" style="width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 6px;">
-      <button class="buy-btn" onclick="authAdmin()">Ingresar</button>
-      <button class="buy-btn" style="background: #334155;" onclick="closeModal('admin-modal')">Cerrar</button>
-      
-      <div id="admin-body" style="display: none; margin-top: 15px;">
-        <p style="font-size: 12px; color: #10b981; margin-bottom: 10px;">¡Sesión iniciada correctamente!</p>
-        <button class="buy-btn" style="background: #ef4444;" onclick="resetApp()">🧹 Resetear Memoria Completa</button>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3>⚙️ Panel Admin Pro</h3>
+        <button onclick="closeModal('admin-modal')" style="background:none; border:none; color:#fff; font-size:20px; cursor:pointer;">&times;</button>
+      </div>
+
+      <div id="admin-auth">
+        <div class="field-group">
+          <label>PIN de Acceso:</label>
+          <input type="password" id="admin-pin" placeholder="Ingresa PIN (24.07.12)">
+        </div>
+        <button class="buy-btn" onclick="authAdmin()">Ingresar</button>
+      </div>
+
+      <div id="admin-body" style="display: none;">
+        <h4 style="margin-bottom: 6px;">1. Tasa de Cambio</h4>
+        <div class="field-group">
+          <label>Tasa BS / USDT:</label>
+          <input type="number" step="0.01" id="admin-tasa">
+        </div>
+        <button class="buy-btn" onclick="saveGeneralSettings()" style="margin-bottom:12px;">Guardar Tasa</button>
+
+        <hr style="margin: 12px 0; border-color: var(--border-color);">
+
+        <h4 style="margin-bottom: 6px;">2. Gestión de Productos por Categoría</h4>
+        <div class="admin-nav-tabs">
+          <button class="admin-tab-btn active" onclick="filterAdminCategory('Juegos', this)">🎮 Juegos</button>
+          <button class="admin-tab-btn" onclick="filterAdminCategory('Streaming', this)">📺 Streaming</button>
+          <button class="admin-tab-btn" onclick="filterAdminCategory('Licencias', this)">🔑 Licencias</button>
+        </div>
+
+        <div class="field-group">
+          <label>Seleccionar Producto a Editar:</label>
+          <select id="edit-prod-select" onchange="loadProductToEdit()">
+            <option value="NEW">➕ -- CREAR NUEVO PRODUCTO --</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label>Título del Producto:</label>
+          <input type="text" id="prod-title" placeholder="Ej: RECARGA ROBLOX">
+        </div>
+        <div class="field-group">
+          <label>Insignia (Ej: x1, x2):</label>
+          <input type="text" id="prod-badge" placeholder="x1">
+        </div>
+        <div class="field-group">
+          <label>Texto del Botón (Ej: 1 TOKEN):</label>
+          <input type="text" id="prod-price-text" placeholder="🎟️ 1 TOKEN">
+        </div>
+        <div class="field-group">
+          <label>Descripción Larga (Modal):</label>
+          <textarea id="prod-desc-long" rows="2" placeholder="Detalles de la oferta o canje"></textarea>
+        </div>
+        <div class="field-group">
+          <label>URL Imagen Tarjeta:</label>
+          <input type="text" id="prod-img-card" placeholder="URL de la imagen">
+        </div>
+        <div class="field-group">
+          <label>Variantes (Opción:PrecioUSDT separado por comas):</label>
+          <input type="text" id="prod-variants" placeholder="Canje VIP:4.99, Regular:6.00">
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+          <button class="buy-btn" id="btn-save-prod" onclick="saveProduct()">Guardar Producto</button>
+          <button class="buy-btn" style="background: #ef4444; display: none;" id="btn-delete-prod" onclick="deleteProduct()">Eliminar</button>
+        </div>
+
+        <hr style="margin: 12px 0; border-color: var(--border-color);">
+
+        <h4 style="margin-bottom: 6px;">3. Avatar (10 Gestos)</h4>
+        <div class="field-group"><label>1. Bienvenida:</label><input type="text" id="avatar-img-0"><input type="text" id="avatar-text-0" style="margin-top:2px;"></div>
+        <div class="field-group"><label>2. Pensativa:</label><input type="text" id="avatar-img-1"><input type="text" id="avatar-text-1" style="margin-top:2px;"></div>
+        <div class="field-group"><label>3. Entusiasmada:</label><input type="text" id="avatar-img-2"><input type="text" id="avatar-text-2" style="margin-top:2px;"></div>
+        <div class="field-group"><label>4. Sorprendida:</label><input type="text" id="avatar-img-3"><input type="text" id="avatar-text-3" style="margin-top:2px;"></div>
+        <div class="field-group"><label>5. Guiño:</label><input type="text" id="avatar-img-4"><input type="text" id="avatar-text-4" style="margin-top:2px;"></div>
+        <div class="field-group"><label>6. Apenada:</label><input type="text" id="avatar-img-5"><input type="text" id="avatar-text-5" style="margin-top:2px;"></div>
+        <div class="field-group"><label>7. Agradecida:</label><input type="text" id="avatar-img-6"><input type="text" id="avatar-text-6" style="margin-top:2px;"></div>
+        <div class="field-group"><label>8. Victoria:</label><input type="text" id="avatar-img-7"><input type="text" id="avatar-text-7" style="margin-top:2px;"></div>
+        <div class="field-group"><label>9. Explicativa:</label><input type="text" id="avatar-img-8"><input type="text" id="avatar-text-8" style="margin-top:2px;"></div>
+        <div class="field-group"><label>10. Feliz:</label><input type="text" id="avatar-img-9"><input type="text" id="avatar-text-9" style="margin-top:2px;"></div>
+
+        <button class="buy-btn" style="background: #3b82f6; margin-bottom: 12px;" onclick="saveAvatarSettings()">Guardar Gestos Avatar</button>
+
+        <hr style="margin: 12px 0; border-color: var(--border-color);">
+
+        <h4 style="margin-bottom: 6px;">4. Respaldos & Mantenimiento</h4>
+        <div style="display: flex; gap: 6px; margin-bottom: 10px;">
+          <button class="buy-btn" style="background: #0284c7;" onclick="exportData()">📥 Exportar JSON</button>
+          <button class="buy-btn" style="background: #8b5cf6;" onclick="triggerImport()">📤 Importar JSON</button>
+          <input type="file" id="import-file" style="display: none;" accept=".json" onchange="importData(event)">
+        </div>
+        <button class="buy-btn" style="background: #ef4444;" onclick="resetApp()">🧹 Resetear Memoria Local</button>
       </div>
     </div>
   </div>
@@ -249,31 +397,59 @@
 
     const defaultData = {
       tasaBs: 1047,
+      avatarConfig: [
+        { img: "img/avatar/gesto1.png", text: "¡Hola! ¿Qué se te antoja hoy? ✨ ¡Los mejores precios VIP!" },
+        { img: "img/avatar/gesto2.png", text: "¿Buscabas algo especial? Dime y lo resolvemos de una." },
+        { img: "img/avatar/gesto3.png", text: "¡Los mejores pases y recargas están aquí! Calidad 100% garantizada. 🎯" },
+        { img: "img/avatar/gesto4.png", text: "¡Wao, esa oferta está brutal! No te la pienses mucho." },
+        { img: "img/avatar/gesto5.png", text: "¿Tarde de películas o series? Tengo las mejores pantallas activas. 🍿" },
+        { img: "img/avatar/gesto6.png", text: "¡Oops! Déjame revisar el stock... ¡A veces las recargas vuelan! 😅" },
+        { img: "img/avatar/gesto7.png", text: "¡Gracias por preferirnos! Tu apoyo vale oro para JBstore. 🩵" },
+        { img: "img/avatar/gesto8.png", text: "¡Pedido listo! Te veo en WhatsApp para entregártelo volando. 📲💨" },
+        { img: "img/avatar/gesto9.png", text: "¿Licencias activas para tus consolas o PC? Todo 100% legal y seguro. 🔑" },
+        { img: "img/avatar/gesto10.png", text: "¡Vuelve pronto! Aquí estaremos esperándote con más promos." }
+      ],
       productos: [
         {
           id: "roblox-1",
           categoria: "Juegos",
           titulo: "RECARGA ROBLOX",
+          badge: "x1",
           priceText: "🎟️ 1 TOKEN",
-          desc: "Canjea 1 Token + $4.99 USDT (O $6.00 sin token). Entrega vía ID.",
-          img: "img/avatar/gesto1.png",
+          descLong: "Canjea 1 Token de tu membresía activa + $4.99 USDT en lugar del precio regular de $6.00 USDT. Entrega de 5 a 15 minutos Vía ID.",
+          imgCard: "img/avatar/gesto1.png",
           variantes: [{ nombre: "Canje con 1 Token", usdt: 4.99 }, { nombre: "Precio Regular", usdt: 6.00 }]
         },
         {
           id: "codm-1",
           categoria: "Juegos",
           titulo: "CALL OF DUTY MOBILE",
+          badge: "x1",
           priceText: "🎟️ 1 TOKEN",
-          desc: "COD Points directos a tu cuenta.",
-          img: "img/avatar/gesto3.png",
-          variantes: [{ nombre: "80 COD Points", usdt: 1.25 }]
+          descLong: "COD Points directos por acceso de Activision para miembros VIP activos.",
+          imgCard: "img/avatar/gesto3.png",
+          variantes: [{ nombre: "80 COD Points", usdt: 1.25 }, { nombre: "2400 COD Points", usdt: 25.90 }]
         }
       ]
     };
 
-    let storeData = defaultData;
+    let localRaw = localStorage.getItem('jbstore_vip_data');
+    let storeData = null;
+
+    try {
+      storeData = localRaw ? JSON.parse(localRaw) : null;
+    } catch(e) { storeData = null; }
+
+    if (!storeData || !storeData.productos || storeData.productos.length === 0) {
+      storeData = defaultData;
+      localStorage.setItem('jbstore_vip_data', JSON.stringify(storeData));
+    }
+
     let currentCategory = "Juegos";
+    let adminCategory = "Juegos";
     let selectedProd = null;
+    let isAudioPlaying = false;
+    let lastGestureIndex = -1;
 
     function renderShop(cat) {
       const grid = document.getElementById('shop-grid');
@@ -281,16 +457,21 @@
       const list = storeData.productos.filter(p => p.categoria === cat);
 
       if (list.length === 0) {
-        grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 20px;">Sin productos en esta categoría</div>`;
+        grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 20px; color: var(--text-muted);">Sin productos en esta categoría aún.</div>`;
         return;
       }
 
       list.forEach(p => {
+        let badge = p.badge || "x1";
+        let titleClass = (p.titulo && p.titulo.length > 16) ? "gacha-title gacha-title-scroll" : "gacha-title";
         grid.innerHTML += `
           <div class="gacha-card" onclick="openBuyModal('${p.id}')">
-            <img src="${p.img}" class="gacha-img" onerror="this.src='img/avatar/gesto1.png'">
-            <div class="gacha-title">${p.titulo}</div>
-            <div class="gacha-price-bar">${p.priceText}</div>
+            <span class="gacha-badge">${badge}</span>
+            <img src="${p.imgCard}" class="gacha-img" onerror="this.src='img/avatar/gesto1.png'">
+            <div class="gacha-title-wrapper">
+              <div class="${titleClass}">${p.titulo}</div>
+            </div>
+            <div class="gacha-price-bar">${p.priceText || '1 TOKEN'}</div>
           </div>
         `;
       });
@@ -300,53 +481,122 @@
       currentCategory = cat;
       document.querySelectorAll('.tab-item').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+      talkMascot();
       renderShop(cat);
     }
 
     function openBuyModal(id) {
       selectedProd = storeData.productos.find(p => p.id === id);
       document.getElementById('modal-title').innerText = selectedProd.titulo;
-      document.getElementById('modal-desc').innerText = selectedProd.desc;
+      document.getElementById('modal-desc').innerText = selectedProd.descLong || '';
       
+      const imgBanner = document.getElementById('modal-img-banner');
+      if (selectedProd.imgCard) {
+        imgBanner.src = selectedProd.imgCard;
+        imgBanner.style.display = 'block';
+      } else { imgBanner.style.display = 'none'; }
+
       const sel = document.getElementById('modal-variant-select');
-      sel.innerHTML = selectedProd.variantes.map(v => `<option value="${v.usdt}">${v.nombre} - ${v.usdt} USDT</option>`).join('');
+      sel.innerHTML = selectedProd.variantes.map(v => `<option value="${v.usdt}">${v.nombre} — ${v.usdt.toFixed(2)} USDT</option>`).join('');
       
+      updateModalTotal();
       openModal('modal-buy');
     }
 
+    function updateModalTotal() {
+      const sel = document.getElementById('modal-variant-select');
+      const unitUsdt = parseFloat(sel.value) || 0;
+      const totalBs = (unitUsdt * (storeData.tasaBs || 1047)).toFixed(2);
+      document.getElementById('modal-total-usdt').innerText = `${unitUsdt.toFixed(2)} USDT`;
+      document.getElementById('modal-total-bs').innerText = `~ ${totalBs} BS`;
+    }
+
     function confirmOrder() {
+      const accountData = document.getElementById('client-account-data').value.trim();
+      if (!accountData) return alert("Por favor ingresa los datos para procesar el pedido.");
+
       const sel = document.getElementById('modal-variant-select');
       const opt = sel.options[sel.selectedIndex].text;
-      const msg = `🌟 *PEDIDO JBstore VIP*\n\n📌 *Producto:* ${selectedProd.titulo}\n🔹 *Opción:* ${opt}`;
+      const msg = `🌟 *PEDIDO JBstore VIP*\n\n📌 *Producto:* ${selectedProd.titulo}\n🔹 *Opción:* ${opt}\n\n👤 *Datos de la entrega:*\n${accountData}`;
       window.open(`https://wa.me/${PHONE}?text=${encodeURIComponent(msg)}`, '_blank');
       closeModal('modal-buy');
     }
 
     function talkMascot() {
-      const msgs = [
-        "¡Hola! ¿Qué se te antoja hoy? ✨",
-        "¡Los mejores pases están aquí!",
-        "¿Buscabas algo especial? Dime de una."
-      ];
-      document.getElementById('character-text').innerText = msgs[Math.floor(Math.random() * msgs.length)];
+      if (!storeData.avatarConfig || storeData.avatarConfig.length === 0) return;
+      let randomIndex;
+      do {
+        randomIndex = Math.floor(Math.random() * storeData.avatarConfig.length);
+      } while (randomIndex === lastGestureIndex && storeData.avatarConfig.length > 1);
+
+      lastGestureIndex = randomIndex;
+      const g = storeData.avatarConfig[randomIndex];
+      document.getElementById('character-text').innerText = g.text;
+      if (g.img) document.getElementById('mascot').src = g.img;
     }
 
+    function toggleAudio() {
+      const audio = document.getElementById('bgm');
+      const btn = document.getElementById('audio-toggle');
+      if (isAudioPlaying) {
+        audio.pause();
+        btn.innerText = "🔊 Música: OFF";
+      } else {
+        audio.play().catch(() => alert("Toca la pantalla para autorizar el sonido."));
+        btn.innerText = "🎶 Música: ON";
+      }
+      isAudioPlaying = !isAudioPlaying;
+    }
+
+    /* ADMIN JS */
     function authAdmin() {
       if (document.getElementById('admin-pin').value === "24.07.12") {
+        document.getElementById('admin-auth').style.display = 'none';
         document.getElementById('admin-body').style.display = 'block';
+        document.getElementById('admin-tasa').value = storeData.tasaBs || 1047;
+
+        if (storeData.avatarConfig) {
+          storeData.avatarConfig.forEach((g, idx) => {
+            if (document.getElementById(`avatar-img-${idx}`)) document.getElementById(`avatar-img-${idx}`).value = g.img || '';
+            if (document.getElementById(`avatar-text-${idx}`)) document.getElementById(`avatar-text-${idx}`).value = g.text || '';
+          });
+        }
+        filterAdminCategory('Juegos');
       } else { alert("PIN Incorrecto"); }
     }
 
-    function resetApp() {
-      localStorage.clear();
-      location.reload();
+    function filterAdminCategory(cat, btn) {
+      adminCategory = cat;
+      if (btn) {
+        document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      }
+      populateAdminProductDropdown();
     }
 
-    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function populateAdminProductDropdown() {
+      let sel = document.getElementById('edit-prod-select');
+      sel.innerHTML = '<option value="NEW">➕ -- CREAR NUEVO PRODUCTO --</option>';
+      const filtered = storeData.productos.filter(p => p.categoria === adminCategory);
+      filtered.forEach(p => { sel.innerHTML += `<option value="${p.id}">✏️ ${p.titulo}</option>`; });
+      loadProductToEdit();
+    }
 
-    // Inicializar
-    renderShop('Juegos');
-  </script>
-</body>
-</html>
+    function loadProductToEdit() {
+      let selectedId = document.getElementById('edit-prod-select').value;
+      let btnDelete = document.getElementById('btn-delete-prod');
+      let btnSave = document.getElementById('btn-save-prod');
+
+      if (selectedId === "NEW") {
+        document.getElementById('prod-title').value = '';
+        document.getElementById('prod-badge').value = 'x1';
+        document.getElementById('prod-price-text').value = '🎟️ 1 TOKEN';
+        document.getElementById('prod-desc-long').value = '';
+        document.getElementById('prod-img-card').value = '';
+        document.getElementById('prod-variants').value = '';
+        btnDelete.style.display = 'none';
+        btnSave.innerText = "Guardar Producto";
+      } else {
+        let p = storeData.productos.find(prod => prod.id === selectedId);
+        if (p) {
+          document
