@@ -6,9 +6,8 @@
   <title>JBstore VIP — Gacha Experience</title>
   <style>
     :root {
-      --bg-gradient: linear-gradient(135deg, rgba(15, 23, 42, 0.88) 0%, rgba(30, 41, 59, 0.92) 100%);
+      --bg-dark: #0f172a;
       --accent-color: #10b981;
-      --accent-hover: #059669;
       --border-color: #334155;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
@@ -16,9 +15,8 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
 
-    /* FONDO ESTILO TIENDA CON AMBIENTE DE JUEGO */
     body {
-      background: var(--bg-gradient), 
+      background: linear-gradient(rgba(15, 23, 42, 0.88), rgba(30, 41, 59, 0.92)), 
                   url('https://images.unsplash.com/photo-1555680202-c86f0e12f086?auto=format&fit=crop&w=1200&q=75') center/cover no-repeat fixed;
       color: var(--text-main);
       min-height: 100vh;
@@ -32,8 +30,7 @@
       justify-content: space-between;
       align-items: center;
       padding: 12px 20px;
-      background: rgba(15, 23, 42, 0.92);
-      backdrop-filter: blur(8px);
+      background: rgba(15, 23, 42, 0.95);
       border-bottom: 2px solid var(--border-color);
       position: sticky;
       top: 0;
@@ -41,7 +38,6 @@
     }
 
     .logo-vip { font-size: 20px; font-weight: 900; color: var(--accent-color); }
-
     .header-btns { display: flex; gap: 8px; align-items: center; }
 
     .sound-btn, .admin-btn {
@@ -99,7 +95,6 @@
       cursor: pointer;
       color: #fff;
       text-align: left;
-      backdrop-filter: blur(4px);
     }
     .tab-item.active { background: var(--accent-color); border-color: var(--accent-color); }
 
@@ -109,7 +104,6 @@
       border: 2px solid var(--border-color);
       border-radius: 16px;
       padding: 16px;
-      backdrop-filter: blur(10px);
     }
 
     .shop-grid {
@@ -179,17 +173,6 @@
       width: 100%;
     }
 
-    .gacha-title-scroll {
-      display: inline-block;
-      padding-left: 100%;
-      animation: marquee 7s linear infinite;
-    }
-
-    @keyframes marquee {
-      0% { transform: translate(0, 0); }
-      100% { transform: translate(-100%, 0); }
-    }
-
     .gacha-subtitle {
       font-size: 10px;
       color: #64748b;
@@ -216,7 +199,7 @@
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.82);
+      background: rgba(0, 0, 0, 0.85);
       z-index: 100;
       justify-content: center;
       align-items: center;
@@ -381,7 +364,7 @@
           <input type="text" id="prod-subtitle" placeholder="Disponible 10 veces">
         </div>
         <div class="field-group">
-          <label>Valor de Token / Precio (Ej: 100 o 1 TOKEN):</label>
+          <label>Valor de Token / Precio (Ej: 1 TOKEN):</label>
           <input type="text" id="prod-price-text" placeholder="1 TOKEN">
         </div>
         <div class="field-group">
@@ -493,8 +476,6 @@
       list.forEach(p => {
         let badge = p.badge || "x1";
         let sub = p.subtitle || "Disponible";
-        let isLongTitle = p.titulo.length > 15;
-        let titleClass = isLongTitle ? "gacha-title gacha-title-scroll" : "gacha-title";
 
         grid.innerHTML += `
           <div class="gacha-card" onclick="openBuyModal('${p.id}')">
@@ -503,7 +484,7 @@
               <span class="gacha-badge">${badge}</span>
             </div>
             <div class="gacha-title-wrapper">
-              <div class="${titleClass}">${p.titulo}</div>
+              <div class="gacha-title">${p.titulo}</div>
             </div>
             <div class="gacha-subtitle">${sub}</div>
             <div class="gacha-price-bar">
@@ -655,4 +636,131 @@
       }
     }
 
-    function saveProduct()
+    function saveProduct() {
+      let selectedId = document.getElementById('edit-prod-select').value;
+      let title = document.getElementById('prod-title').value.trim();
+      let badge = document.getElementById('prod-badge').value.trim() || 'x1';
+      let subtitle = document.getElementById('prod-subtitle').value.trim() || 'Disponible';
+      let priceText = document.getElementById('prod-price-text').value.trim() || '1 TOKEN';
+      let descLong = document.getElementById('prod-desc-long').value.trim();
+      let imgCard = document.getElementById('prod-img-card').value.trim();
+      let rawVar = document.getElementById('prod-variants').value.trim();
+
+      if (!title || !rawVar) return alert("Ingresa el título y las variantes.");
+
+      let vars = rawVar.split(',').map(v => {
+        let [n, p] = v.split(':');
+        return { nombre: n.trim(), usdt: parseFloat(p ? p.trim() : '0') };
+      });
+
+      if (selectedId === "NEW") {
+        storeData.productos.push({
+          id: Date.now().toString(),
+          categoria: adminCategory,
+          titulo: title,
+          badge,
+          subtitle,
+          priceText,
+          descLong,
+          imgCard,
+          variantes: vars
+        });
+      } else {
+        let idx = storeData.productos.findIndex(p => p.id === selectedId);
+        if (idx !== -1) {
+          storeData.productos[idx] = {
+            id: selectedId,
+            categoria: adminCategory,
+            titulo: title,
+            badge,
+            subtitle,
+            priceText,
+            descLong,
+            imgCard,
+            variantes: vars
+          };
+        }
+      }
+
+      saveToStorage();
+      populateAdminProductDropdown();
+      alert("¡Producto guardado exitosamente!");
+    }
+
+    function deleteProduct() {
+      let selectedId = document.getElementById('edit-prod-select').value;
+      if (selectedId === "NEW") return;
+      if (confirm("¿Eliminar este producto?")) {
+        storeData.productos = storeData.productos.filter(p => p.id !== selectedId);
+        saveToStorage();
+        populateAdminProductDropdown();
+      }
+    }
+
+    function saveGeneralSettings() {
+      storeData.tasaBs = parseFloat(document.getElementById('admin-tasa').value) || storeData.tasaBs;
+      saveToStorage();
+      alert("Tasa actualizada.");
+    }
+
+    function saveAvatarSettings() {
+      storeData.avatarConfig = [];
+      for (let i = 0; i < 10; i++) {
+        let imgInput = document.getElementById(`avatar-img-${i}`);
+        let textInput = document.getElementById(`avatar-text-${i}`);
+        if (imgInput && textInput) {
+          storeData.avatarConfig.push({ img: imgInput.value.trim(), text: textInput.value.trim() });
+        }
+      }
+      saveToStorage();
+      alert("¡Gestos actualizados!");
+    }
+
+    function saveToStorage() {
+      localStorage.setItem('jbstore_vip_data', JSON.stringify(storeData));
+      renderShop(currentCategory);
+    }
+
+    function exportData() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(storeData, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `JBstore_VIP_Respaldo_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function triggerImport() { document.getElementById('import-file').click(); }
+
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (imported && imported.productos) {
+            storeData = imported;
+            saveToStorage();
+            talkMascot();
+            alert("¡Respaldo restaurado con éxito!");
+          } else { alert("El archivo no es un respaldo válido."); }
+        } catch (err) { alert("Error al leer el archivo JSON."); }
+      };
+      reader.readAsText(file);
+    }
+
+    function resetApp() {
+      localStorage.removeItem('jbstore_vip_data');
+      location.reload();
+    }
+
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    // Inicializar
+    renderShop('Juegos');
+  </script>
+</body>
+</html>
